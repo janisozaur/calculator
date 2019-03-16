@@ -6,6 +6,7 @@
 
 #include "CalculatorResource.h"
 
+#include <string_view>
 using namespace std;
 using namespace CalcEngine;
 
