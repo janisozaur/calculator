@@ -163,9 +163,11 @@ namespace UnitConversionManager
         virtual std::pair<std::wstring, std::wstring> GetCurrencyRatioEquality(_In_ const UnitConversionManager::Unit& unit1, _In_ const UnitConversionManager::Unit& unit2) = 0;
         virtual std::wstring GetCurrencyTimestamp() = 0;
 
+#if 0
         virtual concurrency::task<bool> TryLoadDataFromCacheAsync() = 0;
         virtual concurrency::task<bool> TryLoadDataFromWebAsync() = 0;
         virtual concurrency::task<bool> TryLoadDataFromWebOverrideAsync() = 0;
+#endif
     };
 
     class IUnitConverterVMCallback
@@ -194,7 +196,9 @@ namespace UnitConversionManager
         virtual void SendCommand(Command command) = 0;
         virtual void SetViewModelCallback(_In_ const std::shared_ptr<IUnitConverterVMCallback>& newCallback) = 0;
         virtual void SetViewModelCurrencyCallback(_In_ const std::shared_ptr<IViewModelCurrencyCallback>& newCallback) = 0;
+#if 0
         virtual concurrency::task<std::pair<bool, std::wstring>> RefreshCurrencyRatios() = 0;
+#endif
     };
 
     class UnitConverter : public IUnitConverter, public std::enable_shared_from_this<UnitConverter>
@@ -217,7 +221,9 @@ namespace UnitConversionManager
         void SendCommand(Command command) override;
         void SetViewModelCallback(_In_ const std::shared_ptr<IUnitConverterVMCallback>& newCallback) override;
         void SetViewModelCurrencyCallback(_In_ const std::shared_ptr<IViewModelCurrencyCallback>& newCallback) override;
+#if 0
         concurrency::task<std::pair<bool, std::wstring>> RefreshCurrencyRatios() override;
+#endif
         // IUnitConverter
 
         static std::vector<std::wstring> StringToVector(const std::wstring& w, const wchar_t * delimiter, bool addRemainder = false);

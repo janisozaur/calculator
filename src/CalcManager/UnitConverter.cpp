@@ -5,7 +5,9 @@
 #include "Command.h"
 #include "UnitConverter.h"
 
-using namespace concurrency;
+#include <cmath>
+
+//using namespace concurrency;
 using namespace std;
 using namespace UnitConversionManager;
 
@@ -27,6 +29,11 @@ static const double MINIMUMDECIMALALLOWED = pow(10, -1 * (MAXIMUMDIGITSALLOWED -
 
 unordered_map<wchar_t, wstring> quoteConversions;
 unordered_map<wstring, wchar_t> unquoteConversions;
+
+static int _wtoi(const wchar_t *str)
+{
+  return (int)wcstol(str, 0, 10);
+}
 
 /// <summary>
 /// Constructor, sets up all the variables and requires a configLoader
@@ -662,6 +669,7 @@ void UnitConverter::SetViewModelCurrencyCallback(_In_ const shared_ptr<IViewMode
     }
 }
 
+#if 0
 task<pair<bool, wstring>> UnitConverter::RefreshCurrencyRatios()
 {
     shared_ptr<ICurrencyConverterDataLoader> currencyDataLoader = GetCurrencyConverterDataLoader();
@@ -686,6 +694,7 @@ task<pair<bool, wstring>> UnitConverter::RefreshCurrencyRatios()
         return make_pair(didLoad, timestamp);
     }, task_continuation_context::use_default());
 }
+#endif
 
 shared_ptr<ICurrencyConverterDataLoader> UnitConverter::GetCurrencyConverterDataLoader()
 {
