@@ -9,10 +9,13 @@ trigger:
 pool:
   vmImage: 'Ubuntu-16.04'
 
-container: rikorose/gcc-cmake:gcc-7
-
 steps:
 - script: |
-    cmake .
-    cmake --build . -- -j2
+    wget https://github.com/angular/clang-format/raw/master/bin/linux_x64/clang-format
+    chmod a+x clang-format
+    ./clang-format --version
+    for file in $(git ls-files -z | grep -z \\.cpp$); do
+        echo Formatting "$file"
+        ./clang-format -style=file -i "$file"
+    done
   displayName: 'make'
