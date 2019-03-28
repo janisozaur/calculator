@@ -15,11 +15,10 @@ using namespace Windows::Foundation::Collections;
 
 namespace CalculatorApp
 {
-    TitleBar::TitleBar() :
-        m_coreTitleBar(CoreApplication::GetCurrentView()->TitleBar)
+    TitleBar::TitleBar() : m_coreTitleBar(CoreApplication::GetCurrentView()->TitleBar)
     {
         InitializeComponent();
-        
+
         Loaded += ref new RoutedEventHandler(this, &TitleBar::OnLoaded);
         Unloaded += ref new RoutedEventHandler(this, &TitleBar::OnUnloaded);
 
@@ -28,13 +27,13 @@ namespace CalculatorApp
         this->Initialize();
     }
 
-    void TitleBar::OnLoaded(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+    void TitleBar::OnLoaded(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
     {
         this->RegisterForLayoutChanged();
         this->RegisterForVisibilityChanged();
     }
 
-    void TitleBar::OnUnloaded(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+    void TitleBar::OnUnloaded(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
     {
         m_coreTitleBar->LayoutMetricsChanged -= m_layoutChangedToken;
         m_coreTitleBar->IsVisibleChanged -= m_visibilityChangedToken;
@@ -51,41 +50,28 @@ namespace CalculatorApp
 
     void TitleBar::RegisterForLayoutChanged()
     {
-        m_layoutChangedToken =
-            m_coreTitleBar->LayoutMetricsChanged += ref new TypedEventHandler<CoreApplicationViewTitleBar^, Object^>(
-                [this](CoreApplicationViewTitleBar^ cTitleBar, Object^)
-        {
-            // Update title bar control size as needed to account for system size changes
-            SetTitleBarHeight(cTitleBar->Height);
-            SetTitleBarPadding();
-        });
+        m_layoutChangedToken = m_coreTitleBar->LayoutMetricsChanged +=
+            ref new TypedEventHandler<CoreApplicationViewTitleBar ^, Object ^>([this](CoreApplicationViewTitleBar ^ cTitleBar, Object ^) {
+                // Update title bar control size as needed to account for system size changes
+                SetTitleBarHeight(cTitleBar->Height);
+                SetTitleBarPadding();
+            });
     }
 
     void TitleBar::RegisterForVisibilityChanged()
     {
-        m_visibilityChangedToken =
-            m_coreTitleBar->IsVisibleChanged += ref new TypedEventHandler<CoreApplicationViewTitleBar^, Object^>(
-                [this](CoreApplicationViewTitleBar^ cTitleBar, Object^)
-        {
-            // Update title bar visibility
-            SetTitleBarVisibility(cTitleBar->IsVisible);
-        });
+        m_visibilityChangedToken = m_coreTitleBar->IsVisibleChanged +=
+            ref new TypedEventHandler<CoreApplicationViewTitleBar ^, Object ^>([this](CoreApplicationViewTitleBar ^ cTitleBar, Object ^) {
+                // Update title bar visibility
+                SetTitleBarVisibility(cTitleBar->IsVisible);
+            });
     }
 
-    void TitleBar::SetTitleBarText(String^ text)
-    {
-        this->AppName->Text = text;
-    }
+    void TitleBar::SetTitleBarText(String ^ text) { this->AppName->Text = text; }
 
-    void TitleBar::SetTitleBarHeight(double height)
-    {
-        this->Height = height;
-    }
+    void TitleBar::SetTitleBarHeight(double height) { this->Height = height; }
 
-    void TitleBar::SetTitleBarVisibility(bool isVisible)
-    {
-        this->Visibility = isVisible ? ::Visibility::Visible : ::Visibility::Collapsed;
-    }
+    void TitleBar::SetTitleBarVisibility(bool isVisible) { this->Visibility = isVisible ? ::Visibility::Visible : ::Visibility::Collapsed; }
 
     void TitleBar::SetTitleBarPadding()
     {
@@ -108,9 +94,5 @@ namespace CalculatorApp
         this->LayoutRoot->Margin = padding;
     }
 
-    void TitleBar::SetTitleBar()
-    {
-        Window::Current->SetTitleBar(this->LayoutRoot);
-    }
+    void TitleBar::SetTitleBar() { Window::Current->SetTitleBar(this->LayoutRoot); }
 }
-

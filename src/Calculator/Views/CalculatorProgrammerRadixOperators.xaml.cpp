@@ -23,8 +23,7 @@ using namespace Windows::UI::Xaml::Data;
 using namespace CalculatorApp::Common;
 using namespace Windows::UI::Xaml::Media;
 
-CalculatorProgrammerRadixOperators::CalculatorProgrammerRadixOperators() :
-    m_isErrorVisualState(false)
+CalculatorProgrammerRadixOperators::CalculatorProgrammerRadixOperators() : m_isErrorVisualState(false)
 {
     InitializeComponent();
 
@@ -32,21 +31,23 @@ CalculatorProgrammerRadixOperators::CalculatorProgrammerRadixOperators() :
     SetVisibilityBinding(ProgRadixOps, L"IsBinaryBitFlippingEnabled", booleanToVisibilityNegationConverter);
 }
 
-void CalculatorProgrammerRadixOperators::OnLoaded(Object^, RoutedEventArgs^)
+void CalculatorProgrammerRadixOperators::OnLoaded(Object ^, RoutedEventArgs ^)
 {
-    m_progModeRadixChangeToken = Model->ProgModeRadixChange += ref new ProgModeRadixChangeHandler(this, &CalculatorProgrammerRadixOperators::ProgModeRadixChange);
-    m_propertyChangedToken = Model->PropertyChanged += ref new PropertyChangedEventHandler(this, &CalculatorProgrammerRadixOperators::OnViewModelPropertyChanged);
+    m_progModeRadixChangeToken = Model->ProgModeRadixChange +=
+        ref new ProgModeRadixChangeHandler(this, &CalculatorProgrammerRadixOperators::ProgModeRadixChange);
+    m_propertyChangedToken = Model->PropertyChanged +=
+        ref new PropertyChangedEventHandler(this, &CalculatorProgrammerRadixOperators::OnViewModelPropertyChanged);
 }
-void CalculatorProgrammerRadixOperators::OnUnloaded(Object^, RoutedEventArgs^)
+void CalculatorProgrammerRadixOperators::OnUnloaded(Object ^, RoutedEventArgs ^)
 {
     Model->ProgModeRadixChange -= m_progModeRadixChangeToken;
-    Model->PropertyChanged -=  m_propertyChangedToken;
+    Model->PropertyChanged -= m_propertyChangedToken;
 }
 
-void CalculatorProgrammerRadixOperators::Shift_Clicked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void CalculatorProgrammerRadixOperators::Shift_Clicked(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e)
 {
-    bool isShiftChecked = static_cast<ToggleButton^>(sender)->IsChecked->Value;
-    auto scvm = safe_cast<StandardCalculatorViewModel^>(this->DataContext);
+    bool isShiftChecked = static_cast<ToggleButton ^>(sender)->IsChecked->Value;
+    auto scvm = safe_cast<StandardCalculatorViewModel ^>(this->DataContext);
     scvm->IsShiftProgrammerChecked = isShiftChecked;
 
     if (rolButton == nullptr)
@@ -71,9 +72,9 @@ void CalculatorProgrammerRadixOperators::Shift_Clicked(Platform::Object^ sender,
     }
 }
 
-void CalculatorProgrammerRadixOperators::SetVisibilityBinding(FrameworkElement^ element, String^ path, IValueConverter^ converter)
+void CalculatorProgrammerRadixOperators::SetVisibilityBinding(FrameworkElement ^ element, String ^ path, IValueConverter ^ converter)
 {
-    Binding^ commandBinding = ref new Binding();
+    Binding ^ commandBinding = ref new Binding();
     commandBinding->Path = ref new PropertyPath(path);
     commandBinding->Converter = converter;
     element->SetBinding(VisibilityProperty, commandBinding);
@@ -94,13 +95,13 @@ void CalculatorProgrammerRadixOperators::IsErrorVisualState::set(bool value)
     if (m_isErrorVisualState != value)
     {
         m_isErrorVisualState = value;
-        String^ newState = m_isErrorVisualState ? L"ErrorLayout" : L"NoErrorLayout";
+        String ^ newState = m_isErrorVisualState ? L"ErrorLayout" : L"NoErrorLayout";
         VisualStateManager::GoToState(this, newState, false);
         NumberPad->IsErrorVisualState = m_isErrorVisualState;
     }
 }
 
-void CalculatorProgrammerRadixOperators::OnViewModelPropertyChanged(Object^ sender, PropertyChangedEventArgs^ e)
+void CalculatorProgrammerRadixOperators::OnViewModelPropertyChanged(Object ^ sender, PropertyChangedEventArgs ^ e)
 {
     if (e->PropertyName == StandardCalculatorViewModel::OpenParenthesisCountPropertyName && closeParenthesisButton->FocusState != ::FocusState::Unfocused)
     {

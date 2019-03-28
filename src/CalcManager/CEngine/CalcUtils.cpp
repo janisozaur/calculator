@@ -34,24 +34,22 @@ bool IsDigitOpCode(OpCode opCode)
 // was never inout, we need to revert the state changes made as a result of this test
 bool IsGuiSettingOpCode(OpCode opCode)
 {
-    if (IsOpInRange(opCode, IDM_HEX, IDM_BIN) ||
-        IsOpInRange(opCode, IDM_QWORD, IDM_BYTE) ||
-        IsOpInRange(opCode, IDM_DEG, IDM_GRAD))
+    if (IsOpInRange(opCode, IDM_HEX, IDM_BIN) || IsOpInRange(opCode, IDM_QWORD, IDM_BYTE) || IsOpInRange(opCode, IDM_DEG, IDM_GRAD))
     {
         return true;
     }
 
     switch (opCode)
     {
-    case IDC_INV:
-    case IDC_FE:
-    case IDC_MCLEAR:
-    case IDC_BACK:
-    case IDC_EXP:
-    case IDC_STORE:
-    case IDC_MPLUS:
-    case IDC_MMINUS:
-        return true;
+        case IDC_INV:
+        case IDC_FE:
+        case IDC_MCLEAR:
+        case IDC_BACK:
+        case IDC_EXP:
+        case IDC_STORE:
+        case IDC_MPLUS:
+        case IDC_MMINUS:
+            return true;
     }
 
     // most of the commands

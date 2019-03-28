@@ -7,20 +7,11 @@ using namespace std;
 
 namespace CalcEngine
 {
-    Number::Number() noexcept :
-        Number(1, 0, { 0 })
-    {}
+    Number::Number() noexcept : Number(1, 0, {0}) {}
 
-    Number::Number(int32_t sign, int32_t exp, vector<uint32_t> const& mantissa) noexcept :
-        m_sign{ sign },
-        m_exp{ exp },
-        m_mantissa{ mantissa }
-    {}
+    Number::Number(int32_t sign, int32_t exp, vector<uint32_t> const& mantissa) noexcept : m_sign {sign}, m_exp {exp}, m_mantissa {mantissa} {}
 
-    Number::Number(PNUMBER p) noexcept :
-        m_sign{ p->sign },
-        m_exp{ p->exp },
-        m_mantissa{}
+    Number::Number(PNUMBER p) noexcept : m_sign {p->sign}, m_exp {p->exp}, m_mantissa {}
     {
         m_mantissa.reserve(p->cdigit);
         copy(p->mant, p->mant + p->cdigit, back_inserter(m_mantissa));
@@ -33,7 +24,7 @@ namespace CalcEngine
         ret->exp = this->Exp();
         ret->cdigit = static_cast<int32_t>(this->Mantissa().size());
 
-        MANTTYPE *ptrRet = ret->mant;
+        MANTTYPE* ptrRet = ret->mant;
         for (auto const& digit : this->Mantissa())
         {
             *ptrRet++ = digit;
@@ -42,23 +33,14 @@ namespace CalcEngine
         return ret;
     }
 
-    int32_t const& Number::Sign() const
-    {
-        return m_sign;
-    }
+    int32_t const& Number::Sign() const { return m_sign; }
 
-    int32_t const& Number::Exp() const
-    {
-        return m_exp;
-    }
+    int32_t const& Number::Exp() const { return m_exp; }
 
-    vector<uint32_t> const& Number::Mantissa() const
-    {
-        return m_mantissa;
-    }
+    vector<uint32_t> const& Number::Mantissa() const { return m_mantissa; }
 
     bool Number::IsZero() const
     {
-        return all_of(m_mantissa.begin(), m_mantissa.end(), [](auto &&i) { return i == 0; });
+        return all_of(m_mantissa.begin(), m_mantissa.end(), [](auto&& i) { return i == 0; });
     }
 }

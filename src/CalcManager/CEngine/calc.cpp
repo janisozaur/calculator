@@ -55,7 +55,8 @@ void CCalcEngine::InitialOneTimeOnlySetup(CalculationManager::IResourceProvider&
 // CCalcEngine::CCalcEngine
 //
 //////////////////////////////////////////////////
-CCalcEngine::CCalcEngine(bool fPrecedence, bool fIntegerMode, CalculationManager::IResourceProvider* const pResourceProvider, __in_opt ICalcDisplay *pCalcDisplay, __in_opt shared_ptr<IHistoryDisplay> pHistoryDisplay) :
+CCalcEngine::CCalcEngine(bool fPrecedence, bool fIntegerMode, CalculationManager::IResourceProvider* const pResourceProvider,
+                         __in_opt ICalcDisplay* pCalcDisplay, __in_opt shared_ptr<IHistoryDisplay> pHistoryDisplay) :
     m_fPrecedence(fPrecedence),
     m_fIntegerMode(fIntegerMode),
     m_pCalcDisplay(pCalcDisplay),
@@ -67,12 +68,12 @@ CCalcEngine::CCalcEngine(bool fPrecedence, bool fIntegerMode, CalculationManager
     m_bSetCalcState(false),
     m_input(DEFAULT_DEC_SEPARATOR),
     m_nFE(FMT_FLOAT),
-    m_memoryValue{ make_unique<Rational>() },
-    m_holdVal{},
-    m_currentVal{},
-    m_lastVal{},
-    m_parenVals{},
-    m_precedenceVals{},
+    m_memoryValue {make_unique<Rational>()},
+    m_holdVal {},
+    m_currentVal {},
+    m_lastVal {},
+    m_parenVals {},
+    m_precedenceVals {},
     m_bError(false),
     m_bInv(false),
     m_bNoPrevEqu(true),
@@ -108,10 +109,10 @@ void CCalcEngine::InitChopNumbers()
     // these rat numbers are set only once and then never change regardless of
     // base or precision changes
     assert(m_chopNumbers.size() >= 4);
-    m_chopNumbers[0] = Rational{ rat_qword };
-    m_chopNumbers[1] = Rational{ rat_dword };
-    m_chopNumbers[2] = Rational{ rat_word };
-    m_chopNumbers[3] = Rational{ rat_byte };
+    m_chopNumbers[0] = Rational {rat_qword};
+    m_chopNumbers[1] = Rational {rat_dword};
+    m_chopNumbers[2] = Rational {rat_word};
+    m_chopNumbers[3] = Rational {rat_byte};
 
     // initialize the max dec number you can support for each of the supported bit lengths
     // this is basically max num in that width / 2 in integer

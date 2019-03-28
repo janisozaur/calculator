@@ -9,18 +9,19 @@ using namespace concurrency;
 using namespace std;
 
 ConversionResultTaskHelper::ConversionResultTaskHelper(unsigned int delay, const function<void()> functionToRun) :
-    m_delay{ delay },
-    m_storedFunction{ functionToRun }
+    m_delay {delay},
+    m_storedFunction {functionToRun}
 {
     auto token = m_cts.get_token();
     auto delayTask = CompleteAfter(delay);
-    delayTask.then([this, token]()
-    {
-        if (!token.is_canceled())
-        {
-            m_storedFunction();
-        }
-    }, task_continuation_context::use_current());
+    delayTask.then(
+        [this, token]() {
+            if (!token.is_canceled())
+            {
+                m_storedFunction();
+            }
+        },
+        task_continuation_context::use_current());
 }
 
 ConversionResultTaskHelper::~ConversionResultTaskHelper()
@@ -35,6 +36,6 @@ ConversionResultTaskHelper::~ConversionResultTaskHelper()
 // https://msdn.microsoft.com/en-us/library/hh873170.aspx
 task<void> ConversionResultTaskHelper::CompleteAfter(unsigned int timeout)
 {
-    co_await winrt::resume_after(winrt::Windows::Foundation::TimeSpan{ std::chrono::duration<uint32_t, std::milli>(timeout) });
+    co_await winrt::resume_after(winrt::Windows::Foundation::TimeSpan {std::chrono::duration<uint32_t, std::milli>(timeout)});
 };
 #pragma optimize("", on)

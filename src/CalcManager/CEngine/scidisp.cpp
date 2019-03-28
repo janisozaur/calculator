@@ -23,7 +23,6 @@ constexpr uint32_t MAX_GROUPING_SIZE = 16;
 constexpr wstring_view c_decPreSepStr = L"[+-]?(\\d*)[";
 constexpr wstring_view c_decPostSepStr = L"]?(\\d*)(?:e[+-]?(\\d*))?$";
 
-
 /****************************************************************************\
 * void DisplayNum(void)
 *
@@ -35,18 +34,19 @@ constexpr wstring_view c_decPostSepStr = L"]?(\\d*)(?:e[+-]?(\\d*))?$";
 //
 // State of calc last time DisplayNum was called
 //
-typedef struct {
+typedef struct
+{
     Rational value;
     int32_t precision;
     uint32_t radix;
-    int         nFE;
-    NUM_WIDTH   numwidth;
-    bool        fIntMath;
-    bool        bRecord;
-    bool        bUseSep;
+    int nFE;
+    NUM_WIDTH numwidth;
+    bool fIntMath;
+    bool bRecord;
+    bool bUseSep;
 } LASTDISP;
 
-LASTDISP gldPrevious = { 0, -1, 0, -1, (NUM_WIDTH)-1, false, false, false };
+LASTDISP gldPrevious = {0, -1, 0, -1, (NUM_WIDTH)-1, false, false, false};
 
 // Truncates if too big, makes it a non negative - the number in rat. Doesn't do anything if not in INT mode
 CalcEngine::Rational CCalcEngine::TruncateNumForIntMath(CalcEngine::Rational const& rat)
@@ -64,7 +64,7 @@ CalcEngine::Rational CCalcEngine::TruncateNumForIntMath(CalcEngine::Rational con
     if (result < 0)
     {
         // if negative make positive by doing a twos complement
-        result = -(result) - 1;
+        result = -(result)-1;
         result ^= m_chopNumbers[m_numwidth];
     }
 
@@ -82,15 +82,8 @@ void CCalcEngine::DisplayNum(void)
     //  something important has changed since the last time DisplayNum was
     //  called.
     //
-    if (m_bRecord ||
-        gldPrevious.value != m_currentVal ||
-        gldPrevious.precision != m_precision ||
-        gldPrevious.radix != m_radix ||
-        gldPrevious.nFE != (int)m_nFE ||
-        gldPrevious.bUseSep != true ||
-        gldPrevious.numwidth != m_numwidth ||
-        gldPrevious.fIntMath != m_fIntegerMode ||
-        gldPrevious.bRecord != m_bRecord)
+    if (m_bRecord || gldPrevious.value != m_currentVal || gldPrevious.precision != m_precision || gldPrevious.radix != m_radix || gldPrevious.nFE != (int)m_nFE
+        || gldPrevious.bUseSep != true || gldPrevious.numwidth != m_numwidth || gldPrevious.fIntMath != m_fIntegerMode || gldPrevious.bRecord != m_bRecord)
     {
         gldPrevious.precision = m_precision;
         gldPrevious.radix = m_radix;
@@ -145,7 +138,7 @@ int CCalcEngine::IsNumberInvalid(const wstring& numberString, int iMaxExp, int i
         // in case there's an exponent:
         //      its optionally followed by a + or -
         //      which is followed by zero or more digits
-        wregex rx(wstring{ c_decPreSepStr } + m_decimalSeparator + wstring{ c_decPostSepStr });
+        wregex rx(wstring {c_decPreSepStr} + m_decimalSeparator + wstring {c_decPostSepStr});
         wsmatch matches;
         if (regex_match(numberString, matches, rx))
         {
@@ -220,7 +213,7 @@ int CCalcEngine::IsNumberInvalid(const wstring& numberString, int iMaxExp, int i
 \****************************************************************************/
 vector<uint32_t> CCalcEngine::DigitGroupingStringToGroupingVector(wstring_view groupingString)
 {
-    vector<uint32_t> grouping{};
+    vector<uint32_t> grouping {};
     uint32_t currentGroup = 0;
     wchar_t* next = nullptr;
     for (const wchar_t* itr = groupingString.data(); *itr != L'\0'; ++itr)
@@ -250,20 +243,20 @@ wstring CCalcEngine::GroupDigitsPerRadix(wstring_view numberString, uint32_t rad
 {
     if (numberString.empty())
     {
-        return wstring{};
+        return wstring {};
     }
 
     switch (radix)
     {
-    case 10:
-        return GroupDigits(wstring{ m_groupSeparator }, m_decGrouping, numberString, (L'-' == numberString[0]));
-    case 8:
-        return GroupDigits(L" ", { 3, 0 }, numberString);
-    case 2:
-    case 16:
-        return GroupDigits(L" ", { 4, 0 }, numberString);
-    default:
-        return wstring{ numberString };
+        case 10:
+            return GroupDigits(wstring {m_groupSeparator}, m_decGrouping, numberString, (L'-' == numberString[0]));
+        case 8:
+            return GroupDigits(L" ", {3, 0}, numberString);
+        case 2:
+        case 16:
+            return GroupDigits(L" ", {4, 0}, numberString);
+        default:
+            return wstring {numberString};
     }
 }
 
@@ -291,7 +284,7 @@ wstring CCalcEngine::GroupDigits(wstring_view delimiter, vector<uint32_t> const&
     // if there's nothing to do, bail
     if (delimiter.empty() || grouping.empty())
     {
-        return wstring{ displayString };
+        return wstring {displayString};
     }
 
     // Find the position of exponential 'e' in the string
@@ -317,7 +310,7 @@ wstring CCalcEngine::GroupDigits(wstring_view delimiter, vector<uint32_t> const&
         ritr = displayString.rbegin();
     }
 
-    wstringstream groupedStream{};
+    wstringstream groupedStream {};
     uint32_t groupingSize = 0;
 
     auto groupItr = grouping.begin();
@@ -337,7 +330,7 @@ wstring CCalcEngine::GroupDigits(wstring_view delimiter, vector<uint32_t> const&
         // - we are at the end of the digit string
         if (currGrouping != 0 && (groupingSize % currGrouping) == 0 && ritr != reverse_end)
         {
-            groupedStream << wstring{ delimiter };
+            groupedStream << wstring {delimiter};
             groupingSize = 0; // reset for a new group
 
             // Shift the grouping to next values if they exist

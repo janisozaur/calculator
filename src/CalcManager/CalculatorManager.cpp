@@ -15,14 +15,9 @@ static constexpr size_t SERIALIZED_NUMBER_MINSIZE = 3;
 // Converts Memory Command enum value to unsigned char,
 // while ignoring Warning C4309: 'conversion' : truncation of constant value
 #ifdef _MSC_VER
-#define MEMORY_COMMAND_TO_UNSIGNED_CHAR(c)\
-    __pragma(warning(push))\
-    __pragma(warning(disable: 4309))\
-        static_cast<unsigned char>(c)\
-    __pragma(warning(pop))
+#define MEMORY_COMMAND_TO_UNSIGNED_CHAR(c) __pragma(warning(push)) __pragma(warning(disable : 4309)) static_cast<unsigned char>(c) __pragma(warning(pop))
 #else
-#define MEMORY_COMMAND_TO_UNSIGNED_CHAR(c)\
-        static_cast<unsigned char>(c)
+#define MEMORY_COMMAND_TO_UNSIGNED_CHAR(c) static_cast<unsigned char>(c)
 #endif // _MSC_VER
 
 namespace CalculationManager
@@ -46,10 +41,7 @@ namespace CalculationManager
     /// Destructor for CalculatorManager
     /// Ends two CCalcEngine
     /// </summary>
-    CalculatorManager::~CalculatorManager()
-    {
-        this->MemorizedNumberClearAll();
-    }
+    CalculatorManager::~CalculatorManager() { this->MemorizedNumberClearAll(); }
 
     /// <summary>
     /// Call the callback function using passed in IDisplayHelper.
@@ -64,37 +56,23 @@ namespace CalculationManager
         }
     }
 
-    void CalculatorManager::SetIsInError(bool isError)
-    {
-        m_displayCallback->SetIsInError(isError);
-    }
+    void CalculatorManager::SetIsInError(bool isError) { m_displayCallback->SetIsInError(isError); }
 
-    void CalculatorManager::DisplayPasteError()
-    {
-        m_currentCalculatorEngine->DisplayError(CALC_E_DOMAIN /*code for "Invalid input" error*/);
-    }
+    void CalculatorManager::DisplayPasteError() { m_currentCalculatorEngine->DisplayError(CALC_E_DOMAIN /*code for "Invalid input" error*/); }
 
-    void CalculatorManager::MaxDigitsReached()
-    {
-        m_displayCallback->MaxDigitsReached();
-    }
+    void CalculatorManager::MaxDigitsReached() { m_displayCallback->MaxDigitsReached(); }
 
-    void CalculatorManager::BinaryOperatorReceived()
-    {
-        m_displayCallback->BinaryOperatorReceived();
-    }
+    void CalculatorManager::BinaryOperatorReceived() { m_displayCallback->BinaryOperatorReceived(); }
 
-    void CalculatorManager::MemoryItemChanged(unsigned int indexOfMemory)
-    {
-        m_displayCallback->MemoryItemChanged(indexOfMemory);
-    }
+    void CalculatorManager::MemoryItemChanged(unsigned int indexOfMemory) { m_displayCallback->MemoryItemChanged(indexOfMemory); }
 
     /// <summary>
     /// Call the callback function using passed in IDisplayHelper.
     /// Used to set the expression display value on ViewModel
     /// </summary>
     /// <param name="expressionString">wstring representing expression to be displayed</param>
-    void CalculatorManager::SetExpressionDisplay(_Inout_ shared_ptr<CalculatorVector<pair<wstring, int>>> const &tokens, _Inout_ shared_ptr<CalculatorVector<shared_ptr<IExpressionCommand>>> const &commands)
+    void CalculatorManager::SetExpressionDisplay(_Inout_ shared_ptr<CalculatorVector<pair<wstring, int>>> const& tokens,
+                                                 _Inout_ shared_ptr<CalculatorVector<shared_ptr<IExpressionCommand>>> const& commands)
     {
         if (!m_inHistoryItemLoadMode)
         {
@@ -107,27 +85,18 @@ namespace CalculationManager
     /// Passed in string representations of memorized numbers get passed to the client
     /// </summary>
     /// <param name="memorizedNumber">vector containing wstring values of memorized numbers</param>
-    void CalculatorManager::SetMemorizedNumbers(_In_ const vector<wstring>& memorizedNumbers)
-    {
-        m_displayCallback->SetMemorizedNumbers(memorizedNumbers);
-    }
+    void CalculatorManager::SetMemorizedNumbers(_In_ const vector<wstring>& memorizedNumbers) { m_displayCallback->SetMemorizedNumbers(memorizedNumbers); }
 
     /// <summary>
     /// Callback from the engine
     /// </summary>
     /// <param name="parenthesisCount">string containing the parenthesis count</param>
-    void CalculatorManager::SetParenDisplayText(const wstring& parenthesisCount)
-    {
-        m_displayCallback->SetParenDisplayText(parenthesisCount);
-    }
+    void CalculatorManager::SetParenDisplayText(const wstring& parenthesisCount) { m_displayCallback->SetParenDisplayText(parenthesisCount); }
 
     /// <summary>
     /// Callback from the engine
     /// </summary>
-    void CalculatorManager::OnNoRightParenAdded()
-    {
-        m_displayCallback->OnNoRightParenAdded();
-    }
+    void CalculatorManager::OnNoRightParenAdded() { m_displayCallback->OnNoRightParenAdded(); }
 
     /// <summary>
     /// Reset CalculatorManager.
@@ -170,7 +139,8 @@ namespace CalculationManager
     {
         if (!m_standardCalculatorEngine)
         {
-            m_standardCalculatorEngine = make_unique<CCalcEngine>(false /* Respect Order of Operations */, false /* Set to Integer Mode */, m_resourceProvider, this, m_pStdHistory);
+            m_standardCalculatorEngine =
+                make_unique<CCalcEngine>(false /* Respect Order of Operations */, false /* Set to Integer Mode */, m_resourceProvider, this, m_pStdHistory);
         }
 
         m_currentCalculatorEngine = m_standardCalculatorEngine.get();
@@ -188,7 +158,8 @@ namespace CalculationManager
     {
         if (!m_scientificCalculatorEngine)
         {
-            m_scientificCalculatorEngine = make_unique<CCalcEngine>(true /* Respect Order of Operations */, false /* Set to Integer Mode */, m_resourceProvider, this, m_pSciHistory);
+            m_scientificCalculatorEngine =
+                make_unique<CCalcEngine>(true /* Respect Order of Operations */, false /* Set to Integer Mode */, m_resourceProvider, this, m_pSciHistory);
         }
 
         m_currentCalculatorEngine = m_scientificCalculatorEngine.get();
@@ -203,9 +174,10 @@ namespace CalculationManager
     /// </summary>
     void CalculatorManager::SetProgrammerMode()
     {
-        if(!m_programmerCalculatorEngine)
+        if (!m_programmerCalculatorEngine)
         {
-            m_programmerCalculatorEngine = make_unique<CCalcEngine>(true /* Respect Order of Operations */, true /* Set to Integer Mode */, m_resourceProvider, this, nullptr);
+            m_programmerCalculatorEngine =
+                make_unique<CCalcEngine>(true /* Respect Order of Operations */, true /* Set to Integer Mode */, m_resourceProvider, this, nullptr);
         }
 
         m_currentCalculatorEngine = m_programmerCalculatorEngine.get();
@@ -213,7 +185,6 @@ namespace CalculationManager
         m_currentCalculatorEngine->ProcessCommand(IDC_CLEAR);
         m_currentCalculatorEngine->ChangePrecision(static_cast<int>(CalculatorPrecision::ProgrammerModePrecision));
     }
-
 
     /// <summary>
     /// Send command to the Calc Engine
@@ -225,22 +196,22 @@ namespace CalculationManager
     {
         // When the expression line is cleared, we save the current state, which includes,
         // primary display, memory, and degree mode
-        if (command == Command::CommandCLEAR || command == Command::CommandEQU
-            || command == Command::ModeBasic || command == Command::ModeScientific || command == Command::ModeProgrammer)
+        if (command == Command::CommandCLEAR || command == Command::CommandEQU || command == Command::ModeBasic || command == Command::ModeScientific
+            || command == Command::ModeProgrammer)
         {
             switch (command)
             {
-            case Command::ModeBasic:
-                this->SetStandardMode();
-                break;
-            case Command::ModeScientific:
-                this->SetScientificMode();
-                break;
-            case Command::ModeProgrammer:
-                this->SetProgrammerMode();
-                break;
-            default:
-                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(command));
+                case Command::ModeBasic:
+                    this->SetStandardMode();
+                    break;
+                case Command::ModeScientific:
+                    this->SetScientificMode();
+                    break;
+                case Command::ModeProgrammer:
+                    this->SetProgrammerMode();
+                    break;
+                default:
+                    m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(command));
             }
 
             m_savedCommands.clear(); // Clear the previous command history
@@ -267,40 +238,40 @@ namespace CalculationManager
 
         switch (command)
         {
-        case Command::CommandASIN:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandSIN));
-            break;
-        case Command::CommandACOS:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandCOS));
-            break;
-        case Command::CommandATAN:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandTAN));
-            break;
-        case Command::CommandPOWE:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandLN));
-            break;
-        case Command::CommandASINH:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandSINH));
-            break;
-        case Command::CommandACOSH:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandCOSH));
-            break;
-        case Command::CommandATANH:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandTANH));
-            break;
-        case Command::CommandFE:
-            m_isExponentialFormat = !m_isExponentialFormat;
-            [[fallthrough]];
-        default:
-            m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(command));
-            break;
+            case Command::CommandASIN:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandSIN));
+                break;
+            case Command::CommandACOS:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandCOS));
+                break;
+            case Command::CommandATAN:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandTAN));
+                break;
+            case Command::CommandPOWE:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandLN));
+                break;
+            case Command::CommandASINH:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandSINH));
+                break;
+            case Command::CommandACOSH:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandCOSH));
+                break;
+            case Command::CommandATANH:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandINV));
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(Command::CommandTANH));
+                break;
+            case Command::CommandFE:
+                m_isExponentialFormat = !m_isExponentialFormat;
+                [[fallthrough]];
+            default:
+                m_currentCalculatorEngine->ProcessCommand(static_cast<OpCode>(command));
+                break;
         }
     }
 
@@ -338,10 +309,7 @@ namespace CalculationManager
     /// <summary>
     /// Return saved degree mode which is saved when last time the expression was cleared.
     /// </summary>
-    Command CalculatorManager::SerializeSavedDegreeMode()
-    {
-        return m_savedDegreeMode;
-    }
+    Command CalculatorManager::SerializeSavedDegreeMode() { return m_savedDegreeMode; }
 
     void CalculatorManager::SerializePrimaryDisplay()
     {
@@ -357,16 +325,13 @@ namespace CalculationManager
     /// <summary>
     /// Return serialized primary display that is saved when the expression line was cleared.
     /// </summary>
-    vector<long> CalculatorManager::GetSerializedPrimaryDisplay()
-    {
-        return m_savedPrimaryValue;
-    }
+    vector<long> CalculatorManager::GetSerializedPrimaryDisplay() { return m_savedPrimaryValue; }
 
     /// <summary>
     /// DeSerialize the primary display from vector of long
     /// </summary>
     /// <param name = "serializedPrimaryDisplay">Serialized Rational of primary display</param>
-    void CalculatorManager::DeSerializePrimaryDisplay(const vector<long> &serializedPrimaryDisplay)
+    void CalculatorManager::DeSerializePrimaryDisplay(const vector<long>& serializedPrimaryDisplay)
     {
         if (serializedPrimaryDisplay.empty())
         {
@@ -400,16 +365,13 @@ namespace CalculationManager
         }
     }
 
-    vector<long> CalculatorManager::GetSerializedMemory()
-    {
-        return m_serializedMemory;
-    }
+    vector<long> CalculatorManager::GetSerializedMemory() { return m_serializedMemory; }
 
     /// <summary>
     /// DeSerialize the Memory from vector of long
     /// </summary>
     /// <param name = "serializedMemory">Serialized Rational of memory</param>
-    void CalculatorManager::DeSerializeMemory(const vector<long> &serializedMemory)
+    void CalculatorManager::DeSerializeMemory(const vector<long>& serializedMemory)
     {
         vector<long>::const_iterator itr = serializedMemory.begin();
         while (itr != serializedMemory.end())
@@ -425,10 +387,7 @@ namespace CalculationManager
     /// <summary>
     /// Return the commands saved since the expression has been cleared.
     /// </summary>
-    vector<unsigned char> CalculatorManager::SerializeCommands()
-    {
-        return m_savedCommands;
-    }
+    vector<unsigned char> CalculatorManager::SerializeCommands() { return m_savedCommands; }
 
     /// <summary>
     /// Replay the serialized commands
@@ -440,8 +399,8 @@ namespace CalculationManager
 
         for (auto commandItr = serializedData.begin(); commandItr != serializedData.end(); ++commandItr)
         {
-            if (*commandItr >= MEMORY_COMMAND_TO_UNSIGNED_CHAR(MemoryCommand::MemorizeNumber) &&
-                *commandItr <= MEMORY_COMMAND_TO_UNSIGNED_CHAR(MemoryCommand::MemorizedNumberClearAll))
+            if (*commandItr >= MEMORY_COMMAND_TO_UNSIGNED_CHAR(MemoryCommand::MemorizeNumber)
+                && *commandItr <= MEMORY_COMMAND_TO_UNSIGNED_CHAR(MemoryCommand::MemorizedNumberClearAll))
             {
                 // MemoryCommands(which have values above 255) are pushed on m_savedCommands upon casting to unsigned char.
                 // SerializeCommands uses m_savedCommands, which is then used in DeSerializeCommands.
@@ -450,38 +409,38 @@ namespace CalculationManager
                 unsigned int indexOfMemory = 0;
                 switch (memoryCommand)
                 {
-                case MemoryCommand::MemorizeNumber:
-                    this->MemorizeNumber();
-                    break;
-                case MemoryCommand::MemorizedNumberLoad:
-                    if (commandItr + 1 == serializedData.end())
-                    {
-                        throw out_of_range("Expecting index of memory, data ended prematurely");
-                    }
-                    indexOfMemory = *(++commandItr);
-                    this->MemorizedNumberLoad(indexOfMemory);
-                    break;
-                case MemoryCommand::MemorizedNumberAdd:
-                    if (commandItr + 1 == serializedData.end())
-                    {
-                        throw out_of_range("Expecting index of memory, data ended prematurely");
-                    }
-                    indexOfMemory = *(++commandItr);
-                    this->MemorizedNumberAdd(indexOfMemory);
-                    break;
-                case MemoryCommand::MemorizedNumberSubtract:
-                    if (commandItr + 1 == serializedData.end())
-                    {
-                        throw out_of_range("Expecting index of memory, data ended prematurely");
-                    }
-                    indexOfMemory = *(++commandItr);
-                    this->MemorizedNumberSubtract(indexOfMemory);
-                    break;
-                case MemoryCommand::MemorizedNumberClearAll:
-                    this->MemorizedNumberClearAll();
-                    break;
-                default:
-                    break;
+                    case MemoryCommand::MemorizeNumber:
+                        this->MemorizeNumber();
+                        break;
+                    case MemoryCommand::MemorizedNumberLoad:
+                        if (commandItr + 1 == serializedData.end())
+                        {
+                            throw out_of_range("Expecting index of memory, data ended prematurely");
+                        }
+                        indexOfMemory = *(++commandItr);
+                        this->MemorizedNumberLoad(indexOfMemory);
+                        break;
+                    case MemoryCommand::MemorizedNumberAdd:
+                        if (commandItr + 1 == serializedData.end())
+                        {
+                            throw out_of_range("Expecting index of memory, data ended prematurely");
+                        }
+                        indexOfMemory = *(++commandItr);
+                        this->MemorizedNumberAdd(indexOfMemory);
+                        break;
+                    case MemoryCommand::MemorizedNumberSubtract:
+                        if (commandItr + 1 == serializedData.end())
+                        {
+                            throw out_of_range("Expecting index of memory, data ended prematurely");
+                        }
+                        indexOfMemory = *(++commandItr);
+                        this->MemorizedNumberSubtract(indexOfMemory);
+                        break;
+                    case MemoryCommand::MemorizedNumberClearAll:
+                        this->MemorizedNumberClearAll();
+                        break;
+                    default:
+                        break;
                 }
             }
             else
@@ -627,10 +586,10 @@ namespace CalculationManager
     }
 
     /// <summary>
-/// Helper function that selects a memory from the vector and set it to CCalcEngine
-/// Saved RAT number needs to be copied and passed in, as CCalcEngine destroyed the passed in RAT
-/// </summary>
-/// <param name="indexOfMemory">Index of the target memory</param>
+    /// Helper function that selects a memory from the vector and set it to CCalcEngine
+    /// Saved RAT number needs to be copied and passed in, as CCalcEngine destroyed the passed in RAT
+    /// </summary>
+    /// <param name="indexOfMemory">Index of the target memory</param>
     void CalculatorManager::MemorizedNumberSelect(_In_ unsigned int indexOfMemory)
     {
         if (m_currentCalculatorEngine->FInErrorState())
@@ -671,56 +630,39 @@ namespace CalculationManager
         m_savedCommands.push_back(static_cast<unsigned char>(indexOfMemory));
     }
 
-    vector<shared_ptr<HISTORYITEM>> const& CalculatorManager::GetHistoryItems()
-    {
-        return m_pHistory->GetHistory();
-    }
+    vector<shared_ptr<HISTORYITEM>> const& CalculatorManager::GetHistoryItems() { return m_pHistory->GetHistory(); }
 
     vector<shared_ptr<HISTORYITEM>> const& CalculatorManager::GetHistoryItems(_In_ CALCULATOR_MODE mode)
     {
-        return (mode == CM_STD) ?
-            m_pStdHistory->GetHistory() :
-            m_pSciHistory->GetHistory();
+        return (mode == CM_STD) ? m_pStdHistory->GetHistory() : m_pSciHistory->GetHistory();
     }
 
-    shared_ptr<HISTORYITEM> const& CalculatorManager::GetHistoryItem(_In_ unsigned int uIdx)
-    {
-        return m_pHistory->GetHistoryItem(uIdx);
-    }
+    shared_ptr<HISTORYITEM> const& CalculatorManager::GetHistoryItem(_In_ unsigned int uIdx) { return m_pHistory->GetHistoryItem(uIdx); }
 
-    void CalculatorManager::OnHistoryItemAdded(_In_ unsigned int addedItemIndex)
-    {
-        m_displayCallback->OnHistoryItemAdded(addedItemIndex);
-    }
+    void CalculatorManager::OnHistoryItemAdded(_In_ unsigned int addedItemIndex) { m_displayCallback->OnHistoryItemAdded(addedItemIndex); }
 
-    bool CalculatorManager::RemoveHistoryItem(_In_ unsigned int uIdx)
-    {
-        return m_pHistory->RemoveItem(uIdx);
-    }
+    bool CalculatorManager::RemoveHistoryItem(_In_ unsigned int uIdx) { return m_pHistory->RemoveItem(uIdx); }
 
-    void CalculatorManager::ClearHistory()
-    {
-        m_pHistory->ClearHistory();
-    }
+    void CalculatorManager::ClearHistory() { m_pHistory->ClearHistory(); }
 
     void CalculatorManager::SetRadix(RADIX_TYPE iRadixType)
     {
         switch (iRadixType)
         {
-        case RADIX_TYPE::HEX_RADIX:
-            m_currentCalculatorEngine->ProcessCommand(IDC_HEX);
-            break;
-        case RADIX_TYPE::DEC_RADIX:
-            m_currentCalculatorEngine->ProcessCommand(IDC_DEC);
-            break;
-        case RADIX_TYPE::OCT_RADIX:
-            m_currentCalculatorEngine->ProcessCommand(IDC_OCT);
-            break;
-        case RADIX_TYPE::BIN_RADIX:
-            m_currentCalculatorEngine->ProcessCommand(IDC_BIN);
-            break;
-        default:
-            break;
+            case RADIX_TYPE::HEX_RADIX:
+                m_currentCalculatorEngine->ProcessCommand(IDC_HEX);
+                break;
+            case RADIX_TYPE::DEC_RADIX:
+                m_currentCalculatorEngine->ProcessCommand(IDC_DEC);
+                break;
+            case RADIX_TYPE::OCT_RADIX:
+                m_currentCalculatorEngine->ProcessCommand(IDC_OCT);
+                break;
+            case RADIX_TYPE::BIN_RADIX:
+                m_currentCalculatorEngine->ProcessCommand(IDC_BIN);
+                break;
+            default:
+                break;
         }
         SetMemorizedNumbersString();
     }
@@ -756,12 +698,12 @@ namespace CalculationManager
 
         switch (eMode)
         {
-        case CM_STD:
-            pHistory = m_pStdHistory.get();
-            break;
-        case CM_SCI:
-            pHistory = m_pSciHistory.get();
-            break;
+            case CM_STD:
+                pHistory = m_pStdHistory.get();
+                break;
+            case CM_SCI:
+                pHistory = m_pSciHistory.get();
+                break;
         }
 
         if (pHistory)
@@ -779,30 +721,18 @@ namespace CalculationManager
         return m_currentCalculatorEngine ? m_currentCalculatorEngine->GetCurrentResultForRadix(radix, precision) : L"";
     }
 
-    void CalculatorManager::SetPrecision(int32_t precision)
-    {
-        m_currentCalculatorEngine->ChangePrecision(precision);
-    }
+    void CalculatorManager::SetPrecision(int32_t precision) { m_currentCalculatorEngine->ChangePrecision(precision); }
 
-    void CalculatorManager::UpdateMaxIntDigits()
-    {
-        m_currentCalculatorEngine->UpdateMaxIntDigits();
-    }
+    void CalculatorManager::UpdateMaxIntDigits() { m_currentCalculatorEngine->UpdateMaxIntDigits(); }
 
     wchar_t CalculatorManager::DecimalSeparator()
     {
         return m_currentCalculatorEngine ? m_currentCalculatorEngine->DecimalSeparator() : m_resourceProvider->GetCEngineString(L"sDecimal")[0];
     }
 
-    bool CalculatorManager::IsEngineRecording()
-    {
-        return m_currentCalculatorEngine->FInRecordingState() ? true : false;
-    }
+    bool CalculatorManager::IsEngineRecording() { return m_currentCalculatorEngine->FInRecordingState() ? true : false; }
 
-    void CalculatorManager::SetInHistoryItemLoadMode(_In_ bool isHistoryItemLoadMode)
-    {
-        m_inHistoryItemLoadMode = isHistoryItemLoadMode;
-    }
+    void CalculatorManager::SetInHistoryItemLoadMode(_In_ bool isHistoryItemLoadMode) { m_inHistoryItemLoadMode = isHistoryItemLoadMode; }
 
     /// <summary>
     /// Serialize Rational to vector of long
@@ -820,7 +750,7 @@ namespace CalculationManager
     /// <param name = "rat">Rational number to be serialized</param>
     vector<long> CalculatorManager::SerializeRational(Rational const& rat)
     {
-        vector<long> serializedRational{};
+        vector<long> serializedRational {};
 
         auto serialP = SerializeNumber(rat.P());
         serializedRational.insert(serializedRational.end(), serialP.begin(), serialP.end());
@@ -858,7 +788,7 @@ namespace CalculationManager
     /// <param name = "num">Number to be serialized</param>
     vector<long> CalculatorManager::SerializeNumber(Number const& num)
     {
-        vector<long> serializedNumber{};
+        vector<long> serializedNumber {};
 
         serializedNumber.push_back(num.Sign());
         serializedNumber.push_back(static_cast<long>(num.Mantissa().size()));
@@ -887,12 +817,12 @@ namespace CalculationManager
         int32_t sign = *itr;
         uint32_t size = *(itr + 1);
         int32_t exp = *(itr + 2);
-        vector<uint32_t> mant{};
+        vector<uint32_t> mant {};
         for (size_t i = 0; i < size; ++i)
         {
             mant.emplace_back(*(itr + 3 + i));
         }
 
-        return Number{ sign, exp, mant };
+        return Number {sign, exp, mant};
     }
 }

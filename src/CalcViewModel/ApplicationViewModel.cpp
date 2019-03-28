@@ -61,7 +61,7 @@ void ApplicationViewModel::Mode::set(ViewMode value)
     }
 }
 
-void ApplicationViewModel::Categories::set(IObservableVector<NavCategoryGroup^>^ value)
+void ApplicationViewModel::Categories::set(IObservableVector<NavCategoryGroup ^> ^ value)
 {
     if (m_categories != value)
     {
@@ -91,7 +91,7 @@ void ApplicationViewModel::Initialize(ViewMode mode)
             throw;
         }
     }
-    catch (Exception^ e)
+    catch (Exception ^ e)
     {
         TraceLogger::GetInstance().LogPlatformException(__FUNCTIONW__, e);
         if (!TryRecoverFromNavigationModeFailure())
@@ -167,7 +167,7 @@ void ApplicationViewModel::OnModeChanged()
     RaisePropertyChanged(AppBarVisibilityPropertyName);
 }
 
-void ApplicationViewModel::OnCopyCommand(Object^ parameter)
+void ApplicationViewModel::OnCopyCommand(Object ^ parameter)
 {
     if (NavCategory::IsConverterViewMode(m_mode))
     {
@@ -183,7 +183,7 @@ void ApplicationViewModel::OnCopyCommand(Object^ parameter)
     }
 }
 
-void ApplicationViewModel::OnPasteCommand(Object^ parameter)
+void ApplicationViewModel::OnPasteCommand(Object ^ parameter)
 {
     if (NavCategory::IsConverterViewMode(m_mode))
     {

@@ -12,10 +12,7 @@ using namespace std;
 
 namespace CalculatorApp
 {
-    EngineResourceProvider::EngineResourceProvider()
-    {
-        m_resLoader = ResourceLoader::GetForViewIndependentUse("CEngineStrings");
-    }
+    EngineResourceProvider::EngineResourceProvider() { m_resLoader = ResourceLoader::GetForViewIndependentUse("CEngineStrings"); }
 
     wstring EngineResourceProvider::GetCEngineString(const wstring& id)
     {
@@ -44,7 +41,7 @@ namespace CalculatorApp
         }
 
         StringReference idRef(id.c_str());
-        String^ str = m_resLoader->GetString(idRef);
+        String ^ str = m_resLoader->GetString(idRef);
         return str->Begin();
     }
 }

@@ -11,7 +11,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitConverterUnitTests
 {
-
     void SetUnitParams(Unit* type, int id, wstring name, wstring abbreviation, bool conversionSource, bool conversionTarget, bool isWhimsical)
     {
         type->id = id;
@@ -39,8 +38,7 @@ namespace UnitConverterUnitTests
     class TestUnitConverterConfigLoader : public IConverterDataLoader
     {
     public:
-        TestUnitConverterConfigLoader() :
-            m_loadDataCallCount(0)
+        TestUnitConverterConfigLoader() : m_loadDataCallCount(0)
         {
             Category c1, c2;
             SetCategoryParams(&c1, 1, L"Length", true);
@@ -89,39 +87,24 @@ namespace UnitConverterUnitTests
             unit4Map[u3] = conversion5;
             unit4Map[u4] = conversion1;
 
-
             m_ratioMaps[u1] = unit1Map;
             m_ratioMaps[u2] = unit2Map;
             m_ratioMaps[u3] = unit3Map;
             m_ratioMaps[u4] = unit4Map;
         }
 
-        void LoadData()
-        {
-            m_loadDataCallCount++;
-        }
+        void LoadData() { m_loadDataCallCount++; }
 
-        vector<Category> LoadOrderedCategories()
-        {
-            return m_categories;
-        }
+        vector<Category> LoadOrderedCategories() { return m_categories; }
 
-        vector<Unit> LoadOrderedUnits(const Category& c)
-        {
-            return m_units[c];
-        }
+        vector<Unit> LoadOrderedUnits(const Category& c) { return m_units[c]; }
 
-        unordered_map<Unit, ConversionData, UnitHash> LoadOrderedRatios(const Unit& u)
-        {
-            return m_ratioMaps[u];
-        }
+        unordered_map<Unit, ConversionData, UnitHash> LoadOrderedRatios(const Unit& u) { return m_ratioMaps[u]; }
 
-        bool SupportsCategory(const Category& /*target*/)
-        {
-            return true;
-        }
+        bool SupportsCategory(const Category& /*target*/) { return true; }
 
         UINT m_loadDataCallCount;
+
     private:
         vector<Category> m_categories;
         CategoryToUnitVectorMap m_units;
@@ -131,10 +114,7 @@ namespace UnitConverterUnitTests
     class TestUnitConverterVMCallback : public IUnitConverterVMCallback
     {
     public:
-        void Reset()
-        {
-            m_maxDigitsReachedCallCount = 0;
-        }
+        void Reset() { m_maxDigitsReachedCallCount = 0; }
 
         void DisplayCallback(const wstring& from, const wstring& to) override
         {
@@ -142,25 +122,13 @@ namespace UnitConverterUnitTests
             m_lastTo = to;
         }
 
-        void SuggestedValueCallback(const vector<tuple<wstring, Unit>>& suggestedValues) override
-        {
-            m_lastSuggested = suggestedValues;
-        }
+        void SuggestedValueCallback(const vector<tuple<wstring, Unit>>& suggestedValues) override { m_lastSuggested = suggestedValues; }
 
-        void MaxDigitsReached() override
-        {
-            m_maxDigitsReachedCallCount++;
-        }
+        void MaxDigitsReached() override { m_maxDigitsReachedCallCount++; }
 
-        int GetMaxDigitsReachedCallCount()
-        {
-            return m_maxDigitsReachedCallCount;
-        }
+        int GetMaxDigitsReachedCallCount() { return m_maxDigitsReachedCallCount; }
 
-        bool CheckDisplayValues(wstring from, wstring to)
-        {
-            return (from == m_lastFrom && to == m_lastTo);
-        }
+        bool CheckDisplayValues(wstring from, wstring to) { return (from == m_lastFrom && to == m_lastTo); }
 
         bool CheckSuggestedValues(vector<tuple<wstring, Unit>> suggested)
         {
@@ -179,6 +147,7 @@ namespace UnitConverterUnitTests
             }
             return returnValue;
         }
+
     private:
         wstring m_lastFrom;
         wstring m_lastTo;
@@ -210,6 +179,7 @@ namespace UnitConverterUnitTests
         TEST_METHOD(UnitConverterTestMaxDigitsReached_LeadingDecimal);
         TEST_METHOD(UnitConverterTestMaxDigitsReached_TrailingDecimal);
         TEST_METHOD(UnitConverterTestMaxDigitsReached_MultipleTimes);
+
     private:
         static void ExecuteCommands(vector<Command> commands);
 
@@ -267,16 +237,16 @@ namespace UnitConverterUnitTests
     // Test ctor/initialization states
     void UnitConverterTest::UnitConverterTestInit()
     {
-        VERIFY_ARE_EQUAL((UINT)0, s_xmlLoader->m_loadDataCallCount);  // shouldn't have initialized the loader yet
+        VERIFY_ARE_EQUAL((UINT)0, s_xmlLoader->m_loadDataCallCount); // shouldn't have initialized the loader yet
         s_unitConverter->Initialize();
-        VERIFY_ARE_EQUAL((UINT)1, s_xmlLoader->m_loadDataCallCount);  // now we should have loaded
+        VERIFY_ARE_EQUAL((UINT)1, s_xmlLoader->m_loadDataCallCount); // now we should have loaded
     }
 
     // Verify a basic input command stream.'3', '2', '.', '0'
     void UnitConverterTest::UnitConverterTestBasic()
     {
-        tuple<wstring, Unit> test1[] = { tuple<wstring,Unit>(wstring(L"0.25"), s_testFeet) };
-        tuple<wstring, Unit> test2[] = { tuple<wstring,Unit>(wstring(L"2.5"), s_testFeet) };
+        tuple<wstring, Unit> test1[] = {tuple<wstring, Unit>(wstring(L"0.25"), s_testFeet)};
+        tuple<wstring, Unit> test2[] = {tuple<wstring, Unit>(wstring(L"2.5"), s_testFeet)};
 
         s_unitConverter->SendCommand(Command::Three);
         VERIFY_IS_TRUE(s_testVMCallback->CheckDisplayValues(wstring(L"3"), wstring(L"3")));
@@ -295,8 +265,8 @@ namespace UnitConverterUnitTests
     // Check the getter functions
     void UnitConverterTest::UnitConverterTestGetters()
     {
-        Category test1[] = { s_testLength, s_testWeight };
-        Unit test2[] = { s_testInches, s_testFeet };
+        Category test1[] = {s_testLength, s_testWeight};
+        Unit test2[] = {s_testInches, s_testFeet};
 
         VERIFY_IS_TRUE(s_unitConverter->GetCategories() == vector<Category>(begin(test1), end(test1)));
         VERIFY_IS_TRUE(get<0>(s_unitConverter->SetCurrentCategory(test1[0])) == vector<Unit>(begin(test2), end(test2)));
@@ -327,7 +297,11 @@ namespace UnitConverterUnitTests
     // Test serialization
     void UnitConverterTest::UnitConverterTestSerialization()
     {
-        wstring test1 = wstring(L"4;Kilograms;Kg;0;0;0;|3;Pounds;Lb;1;1;0;|2;0;Weight;|1;1;0;52.8;116.4039;|1;1;Length;,2;0;Weight;,|1;1;Length;[1;Inches;In;1;1;0;,2;Feet;Ft;0;0;0;,[]2;0;Weight;[3;Pounds;Lb;1;1;0;,4;Kilograms;Kg;0;0;0;,[]|1;Inches;In;1;1;0;[1;Inches;In;1;1;0;:1;0;0;:,2;Feet;Ft;0;0;0;:0.08333333333333332870740406406185;0;0;:,[]2;Feet;Ft;0;0;0;[1;Inches;In;1;1;0;:12;0;0;:,2;Feet;Ft;0;0;0;:1;0;0;:,[]3;Pounds;Lb;1;1;0;[3;Pounds;Lb;1;1;0;:1;0;0;:,4;Kilograms;Kg;0;0;0;:0.45359199999999999519673110626172;0;0;:,[]4;Kilograms;Kg;0;0;0;[3;Pounds;Lb;1;1;0;:2.20461999999999980204279381723609;0;0;:,4;Kilograms;Kg;0;0;0;:1;0;0;:,[]|");
+        wstring test1 = wstring(L"4;Kilograms;Kg;0;0;0;|3;Pounds;Lb;1;1;0;|2;0;Weight;|1;1;0;52.8;116.4039;|1;1;Length;,2;0;Weight;,|1;1;Length;[1;Inches;In;1;"
+                                L"1;0;,2;Feet;Ft;0;0;0;,[]2;0;Weight;[3;Pounds;Lb;1;1;0;,4;Kilograms;Kg;0;0;0;,[]|1;Inches;In;1;1;0;[1;Inches;In;1;1;0;:1;0;0;:"
+                                L",2;Feet;Ft;0;0;0;:0.08333333333333332870740406406185;0;0;:,[]2;Feet;Ft;0;0;0;[1;Inches;In;1;1;0;:12;0;0;:,2;Feet;Ft;0;0;0;:1;"
+                                L"0;0;:,[]3;Pounds;Lb;1;1;0;[3;Pounds;Lb;1;1;0;:1;0;0;:,4;Kilograms;Kg;0;0;0;:0.45359199999999999519673110626172;0;0;:,[]4;"
+                                L"Kilograms;Kg;0;0;0;[3;Pounds;Lb;1;1;0;:2.20461999999999980204279381723609;0;0;:,4;Kilograms;Kg;0;0;0;:1;0;0;:,[]|");
         s_unitConverter->SendCommand(Command::Five);
         s_unitConverter->SendCommand(Command::Two);
         s_unitConverter->SendCommand(Command::Decimal);
@@ -366,7 +340,11 @@ namespace UnitConverterUnitTests
     // Test de-serialization
     void UnitConverterTest::UnitConverterTestDeSerialization()
     {
-        wstring test1 = wstring(L"4;Kilograms;Kg;0;0;0;|3;Pounds;Lb;1;1;0;|2;0;Weight;|1;1;0;52.8;116.4039;|1;1;Length;,2;0;Weight;,|1;1;Length;[1;Inches;In;1;1;0;,2;Feet;Ft;0;0;0;,[]2;0;Weight;[3;Pounds;Lb;1;1;0;,4;Kilograms;Kg;0;0;0;,[]|1;Inches;In;1;1;0;[1;Inches;In;1;1;0;:1;0;0;:,2;Feet;Ft;0;0;0;:0.08333333333333332870740406406185;0;0;:,[]2;Feet;Ft;0;0;0;[1;Inches;In;1;1;0;:12;0;0;:,2;Feet;Ft;0;0;0;:1;0;0;:,[]3;Pounds;Lb;1;1;0;[3;Pounds;Lb;1;1;0;:1;0;0;:,4;Kilograms;Kg;0;0;0;:0.45359199999999999519673110626172;0;0;:,[]4;Kilograms;Kg;0;0;0;[3;Pounds;Lb;1;1;0;:2.20461999999999980204279381723609;0;0;:,4;Kilograms;Kg;0;0;0;:1;0;0;:,[]|");
+        wstring test1 = wstring(L"4;Kilograms;Kg;0;0;0;|3;Pounds;Lb;1;1;0;|2;0;Weight;|1;1;0;52.8;116.4039;|1;1;Length;,2;0;Weight;,|1;1;Length;[1;Inches;In;1;"
+                                L"1;0;,2;Feet;Ft;0;0;0;,[]2;0;Weight;[3;Pounds;Lb;1;1;0;,4;Kilograms;Kg;0;0;0;,[]|1;Inches;In;1;1;0;[1;Inches;In;1;1;0;:1;0;0;:"
+                                L",2;Feet;Ft;0;0;0;:0.08333333333333332870740406406185;0;0;:,[]2;Feet;Ft;0;0;0;[1;Inches;In;1;1;0;:12;0;0;:,2;Feet;Ft;0;0;0;:1;"
+                                L"0;0;:,[]3;Pounds;Lb;1;1;0;[3;Pounds;Lb;1;1;0;:1;0;0;:,4;Kilograms;Kg;0;0;0;:0.45359199999999999519673110626172;0;0;:,[]4;"
+                                L"Kilograms;Kg;0;0;0;[3;Pounds;Lb;1;1;0;:2.20461999999999980204279381723609;0;0;:,4;Kilograms;Kg;0;0;0;:1;0;0;:,[]|");
         s_unitConverter->DeSerialize(test1);
         VERIFY_IS_TRUE(s_testVMCallback->CheckDisplayValues(wstring(L"52.8"), wstring(L"116.4039")));
         VERIFY_IS_TRUE(s_testVMCallback->CheckSuggestedValues(vector<tuple<wstring, Unit>>()));
@@ -375,10 +353,10 @@ namespace UnitConverterUnitTests
     // Test backspace commands
     void UnitConverterTest::UnitConverterTestBackspace()
     {
-        tuple<wstring, Unit> test1[] = { tuple<wstring,Unit>(wstring(L"13.66"), s_testKilograms) };
-        tuple<wstring, Unit> test2[] = { tuple<wstring,Unit>(wstring(L"13.65"), s_testKilograms) };
-        tuple<wstring, Unit> test3[] = { tuple<wstring,Unit>(wstring(L"13.61"), s_testKilograms) };
-        tuple<wstring, Unit> test4[] = { tuple<wstring,Unit>(wstring(L"1.36"), s_testKilograms) };
+        tuple<wstring, Unit> test1[] = {tuple<wstring, Unit>(wstring(L"13.66"), s_testKilograms)};
+        tuple<wstring, Unit> test2[] = {tuple<wstring, Unit>(wstring(L"13.65"), s_testKilograms)};
+        tuple<wstring, Unit> test3[] = {tuple<wstring, Unit>(wstring(L"13.61"), s_testKilograms)};
+        tuple<wstring, Unit> test4[] = {tuple<wstring, Unit>(wstring(L"1.36"), s_testKilograms)};
 
         s_unitConverter->SetCurrentCategory(s_testWeight);
         s_unitConverter->SetCurrentUnitTypes(s_testPounds, s_testPounds);
@@ -469,9 +447,9 @@ namespace UnitConverterUnitTests
     // Test large values
     void UnitConverterTest::UnitConverterTestSupplementaryResultRounding()
     {
-        tuple<wstring, Unit> test1[] = { tuple<wstring,Unit>(wstring(L"27.75"), s_testFeet) };
-        tuple<wstring, Unit> test2[] = { tuple<wstring,Unit>(wstring(L"277.8"), s_testFeet) };
-        tuple<wstring, Unit> test3[] = { tuple<wstring,Unit>(wstring(L"2778"), s_testFeet) };
+        tuple<wstring, Unit> test1[] = {tuple<wstring, Unit>(wstring(L"27.75"), s_testFeet)};
+        tuple<wstring, Unit> test2[] = {tuple<wstring, Unit>(wstring(L"277.8"), s_testFeet)};
+        tuple<wstring, Unit> test3[] = {tuple<wstring, Unit>(wstring(L"2778"), s_testFeet)};
         s_unitConverter->SendCommand(Command::Three);
         s_unitConverter->SendCommand(Command::Three);
         s_unitConverter->SendCommand(Command::Three);
@@ -484,112 +462,50 @@ namespace UnitConverterUnitTests
 
     void UnitConverterTest::UnitConverterTestMaxDigitsReached()
     {
-        ExecuteCommands({
-            Command::One,
-            Command::Two,
-            Command::Three,
-            Command::Four,
-            Command::Five,
-            Command::Six,
-            Command::Seven,
-            Command::Eight,
-            Command::Nine,
-            Command::One,
-            Command::Zero,
-            Command::One,
-            Command::One,
-            Command::One,
-            Command::Two
-        });
+        ExecuteCommands({Command::One, Command::Two, Command::Three, Command::Four, Command::Five, Command::Six, Command::Seven, Command::Eight, Command::Nine,
+                         Command::One, Command::Zero, Command::One, Command::One, Command::One, Command::Two});
 
         VERIFY_ARE_EQUAL(0, s_testVMCallback->GetMaxDigitsReachedCallCount());
 
-        ExecuteCommands({ Command::One });
+        ExecuteCommands({Command::One});
 
         VERIFY_ARE_EQUAL(1, s_testVMCallback->GetMaxDigitsReachedCallCount());
     }
 
     void UnitConverterTest::UnitConverterTestMaxDigitsReached_LeadingDecimal()
     {
-        ExecuteCommands({
-            Command::Zero,
-            Command::Decimal,
-            Command::One,
-            Command::Two,
-            Command::Three,
-            Command::Four,
-            Command::Five,
-            Command::Six,
-            Command::Seven,
-            Command::Eight,
-            Command::Nine,
-            Command::One,
-            Command::Zero,
-            Command::One,
-            Command::One,
-            Command::One
-        });
+        ExecuteCommands({Command::Zero, Command::Decimal, Command::One, Command::Two, Command::Three, Command::Four, Command::Five, Command::Six,
+                         Command::Seven, Command::Eight, Command::Nine, Command::One, Command::Zero, Command::One, Command::One, Command::One});
 
         VERIFY_ARE_EQUAL(0, s_testVMCallback->GetMaxDigitsReachedCallCount());
 
-        ExecuteCommands({ Command::Two });
+        ExecuteCommands({Command::Two});
 
         VERIFY_ARE_EQUAL(1, s_testVMCallback->GetMaxDigitsReachedCallCount());
     }
 
     void UnitConverterTest::UnitConverterTestMaxDigitsReached_TrailingDecimal()
     {
-        ExecuteCommands({
-            Command::One,
-            Command::Two,
-            Command::Three,
-            Command::Four,
-            Command::Five,
-            Command::Six,
-            Command::Seven,
-            Command::Eight,
-            Command::Nine,
-            Command::One,
-            Command::Zero,
-            Command::One,
-            Command::One,
-            Command::One,
-            Command::Two,
-            Command::Decimal
-        });
+        ExecuteCommands({Command::One, Command::Two, Command::Three, Command::Four, Command::Five, Command::Six, Command::Seven, Command::Eight, Command::Nine,
+                         Command::One, Command::Zero, Command::One, Command::One, Command::One, Command::Two, Command::Decimal});
 
         VERIFY_ARE_EQUAL(0, s_testVMCallback->GetMaxDigitsReachedCallCount());
 
-        ExecuteCommands({ Command::One });
+        ExecuteCommands({Command::One});
 
         VERIFY_ARE_EQUAL(1, s_testVMCallback->GetMaxDigitsReachedCallCount());
     }
 
     void UnitConverterTest::UnitConverterTestMaxDigitsReached_MultipleTimes()
     {
-        ExecuteCommands({
-            Command::One,
-            Command::Two,
-            Command::Three,
-            Command::Four,
-            Command::Five,
-            Command::Six,
-            Command::Seven,
-            Command::Eight,
-            Command::Nine,
-            Command::One,
-            Command::Zero,
-            Command::One,
-            Command::One,
-            Command::One,
-            Command::Two
-        });
+        ExecuteCommands({Command::One, Command::Two, Command::Three, Command::Four, Command::Five, Command::Six, Command::Seven, Command::Eight, Command::Nine,
+                         Command::One, Command::Zero, Command::One, Command::One, Command::One, Command::Two});
 
         VERIFY_ARE_EQUAL(0, s_testVMCallback->GetMaxDigitsReachedCallCount());
 
         for (auto count = 1; count <= 10; count++)
         {
-            ExecuteCommands({ Command::Three });
+            ExecuteCommands({Command::Three});
 
             VERIFY_ARE_EQUAL(count, s_testVMCallback->GetMaxDigitsReachedCallCount(), to_wstring(count).c_str());
         }

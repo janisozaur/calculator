@@ -12,7 +12,8 @@ constexpr int ASCII_0 = 48;
 using namespace std;
 using namespace CalcEngine;
 
-namespace {
+namespace
+{
     void IFT(ResultCode hr)
     {
         if (FAILED(hr))
@@ -39,7 +40,7 @@ void CHistoryCollector::ReinitHistory()
 
 // Constructor
 // Can throw Out of memory error
-CHistoryCollector::CHistoryCollector(ICalcDisplay *pCalcDisplay, std::shared_ptr<IHistoryDisplay> pHistoryDisplay, wchar_t decimalSymbol) :
+CHistoryCollector::CHistoryCollector(ICalcDisplay* pCalcDisplay, std::shared_ptr<IHistoryDisplay> pHistoryDisplay, wchar_t decimalSymbol) :
     m_pHistoryDisplay(pHistoryDisplay),
     m_pCalcDisplay(pCalcDisplay),
     m_iCurLineHistStart(-1),
@@ -242,42 +243,42 @@ void CHistoryCollector::AddUnaryOpToHistory(int nOpCode, bool fInv, ANGLE_TYPE a
             int command = nOpCode;
             switch (nOpCode)
             {
-            case IDC_SIN:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandASIN) : IDC_SIN;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
-                break;
-            case IDC_COS:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandACOS) : IDC_COS;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
-                break;
-            case IDC_TAN:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandATAN) : IDC_TAN;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
-                break;
-            case IDC_SINH:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandASINH) : IDC_SINH;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(command);
-                break;
-            case IDC_COSH:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandACOSH) : IDC_COSH;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(command);
-                break;
-            case IDC_TANH:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandATANH) : IDC_TANH;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(command);
-                break;
-            case IDC_LN:
-                command = fInv ? static_cast<int>(CalculationManager::Command::CommandPOWE) : IDC_LN;
-                spExpressionCommand = std::make_shared<CUnaryCommand>(command);
-                break;
-            default:
-                spExpressionCommand = std::make_shared<CUnaryCommand>(nOpCode);
+                case IDC_SIN:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandASIN) : IDC_SIN;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
+                    break;
+                case IDC_COS:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandACOS) : IDC_COS;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
+                    break;
+                case IDC_TAN:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandATAN) : IDC_TAN;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(static_cast<int>(angleOpCode), command);
+                    break;
+                case IDC_SINH:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandASINH) : IDC_SINH;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(command);
+                    break;
+                case IDC_COSH:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandACOSH) : IDC_COSH;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(command);
+                    break;
+                case IDC_TANH:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandATANH) : IDC_TANH;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(command);
+                    break;
+                case IDC_LN:
+                    command = fInv ? static_cast<int>(CalculationManager::Command::CommandPOWE) : IDC_LN;
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(command);
+                    break;
+                default:
+                    spExpressionCommand = std::make_shared<CUnaryCommand>(nOpCode);
             }
         }
 
         iCommandEnd = AddCommand(spExpressionCommand);
 
-        wstring operandStr{ CCalcEngine::OpCodeToUnaryString(nOpCode, fInv, angletype) };
+        wstring operandStr {CCalcEngine::OpCodeToUnaryString(nOpCode, fInv, angletype)};
         if (!m_bLastOpndBrace) // The opnd is already covered in braces. No need for additional braces around it
         {
             operandStr.append(CCalcEngine::OpCodeToString(IDC_OPENP));
@@ -303,7 +304,8 @@ void CHistoryCollector::CompleteHistoryLine(wstring_view numStr)
 {
     if (nullptr != m_pCalcDisplay)
     {
-        m_pCalcDisplay->SetExpressionDisplay(std::make_shared<CalculatorVector<std::pair<std::wstring, int>>>(), std::make_shared<CalculatorVector<std::shared_ptr<IExpressionCommand>>>());
+        m_pCalcDisplay->SetExpressionDisplay(std::make_shared<CalculatorVector<std::pair<std::wstring, int>>>(),
+                                             std::make_shared<CalculatorVector<std::shared_ptr<IExpressionCommand>>>());
     }
 
     if (nullptr != m_pHistoryDisplay)
@@ -324,13 +326,13 @@ void CHistoryCollector::ClearHistoryLine(wstring_view errStr)
     {
         if (nullptr != m_pCalcDisplay)
         {
-            m_pCalcDisplay->SetExpressionDisplay(std::make_shared<CalculatorVector<std::pair<std::wstring, int>>>(), std::make_shared<CalculatorVector<std::shared_ptr<IExpressionCommand>>>());
+            m_pCalcDisplay->SetExpressionDisplay(std::make_shared<CalculatorVector<std::pair<std::wstring, int>>>(),
+                                                 std::make_shared<CalculatorVector<std::shared_ptr<IExpressionCommand>>>());
         }
         m_iCurLineHistStart = -1; // It will get recomputed at the first Opnd
         ReinitHistory();
     }
 }
-
 
 // Adds the given string psz to the globally maintained current equation string at the end.
 //  Also returns the 0 based index in the string just added. Can throw out of memory error
@@ -393,14 +395,13 @@ void CHistoryCollector::SetExpressionDisplay()
     {
         m_pCalcDisplay->SetExpressionDisplay(m_spTokens, m_spCommands);
     }
-
 }
 
-int CHistoryCollector::AddCommand(_In_ const std::shared_ptr<IExpressionCommand> & spCommand)
+int CHistoryCollector::AddCommand(_In_ const std::shared_ptr<IExpressionCommand>& spCommand)
 {
     if (m_spCommands == nullptr)
     {
-        m_spCommands = std::make_shared <CalculatorVector<std::shared_ptr<IExpressionCommand>>>();
+        m_spCommands = std::make_shared<CalculatorVector<std::shared_ptr<IExpressionCommand>>>();
     }
 
     if (FAILED(m_spCommands->Append(spCommand)))

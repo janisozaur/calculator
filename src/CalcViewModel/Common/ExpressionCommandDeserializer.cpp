@@ -7,34 +7,36 @@
 using namespace CalculatorApp::Common;
 using namespace Windows::Storage::Streams;
 
-CommandDeserializer::CommandDeserializer(_In_ DataReader^ dataReader) :m_dataReader(dataReader){}
+CommandDeserializer::CommandDeserializer(_In_ DataReader ^ dataReader) : m_dataReader(dataReader)
+{
+}
 
 std::shared_ptr<IExpressionCommand> CommandDeserializer::Deserialize(_In_ CalculationManager::CommandType cmdType)
 {
     switch (cmdType)
     {
-    case CalculationManager::CommandType::OperandCommand:
+        case CalculationManager::CommandType::OperandCommand:
 
-        return std::make_shared<COpndCommand>(DeserializeOperand());
-        break;
+            return std::make_shared<COpndCommand>(DeserializeOperand());
+            break;
 
-    case CalculationManager::CommandType::Parentheses:
+        case CalculationManager::CommandType::Parentheses:
 
-         return std::make_shared<CParentheses>(DeserializeParentheses());
-        break;
+            return std::make_shared<CParentheses>(DeserializeParentheses());
+            break;
 
-    case CalculationManager::CommandType::UnaryCommand:
+        case CalculationManager::CommandType::UnaryCommand:
 
-        return std::make_shared<CUnaryCommand>(DeserializeUnary());
-        break;
+            return std::make_shared<CUnaryCommand>(DeserializeUnary());
+            break;
 
-    case CalculationManager::CommandType::BinaryCommand:
+        case CalculationManager::CommandType::BinaryCommand:
 
-        return std::make_shared<CBinaryCommand>(DeserializeBinary());
-        break;
+            return std::make_shared<CBinaryCommand>(DeserializeBinary());
+            break;
 
-    default:
-        throw ref new Platform::Exception(E_INVALIDARG, ref new Platform::String(L"Unknown command type"));
+        default:
+            throw ref new Platform::Exception(E_INVALIDARG, ref new Platform::String(L"Unknown command type"));
     }
 }
 

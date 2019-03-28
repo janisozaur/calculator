@@ -11,9 +11,6 @@ namespace CalculatorApp
         Platform::StringReference Snap(L"Snap");
         Platform::StringReference DockedView(L"DockedView");
 
-        bool IsValidViewState(Platform::String^ viewState)
-        {
-            return viewState->Equals(ViewState::Snap) || viewState->Equals(ViewState::DockedView);
-        }
+        bool IsValidViewState(Platform::String ^ viewState) { return viewState->Equals(ViewState::Snap) || viewState->Equals(ViewState::DockedView); }
     }
 }

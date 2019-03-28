@@ -20,7 +20,7 @@ Rational RationalMath::Frac(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -39,7 +39,7 @@ Rational RationalMath::Integer(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -62,7 +62,7 @@ Rational RationalMath::Pow(Rational const& base, Rational const& pow)
         throw(error);
     }
 
-    Rational result{ baseRat };
+    Rational result {baseRat};
     destroyrat(baseRat);
 
     return result;
@@ -87,7 +87,7 @@ Rational RationalMath::Fact(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -107,7 +107,7 @@ Rational RationalMath::Exp(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -127,7 +127,7 @@ Rational RationalMath::Log(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -135,7 +135,7 @@ Rational RationalMath::Log(Rational const& rat)
 
 Rational RationalMath::Log10(Rational const& rat)
 {
-    return Log(rat) / Rational{ ln_ten };
+    return Log(rat) / Rational {ln_ten};
 }
 
 Rational RationalMath::Invert(Rational const& rat)
@@ -145,7 +145,7 @@ Rational RationalMath::Invert(Rational const& rat)
 
 Rational RationalMath::Abs(Rational const& rat)
 {
-    return Rational{ Number{ 1, rat.P().Exp(), rat.P().Mantissa() }, Number{ 1, rat.Q().Exp(), rat.Q().Mantissa() } };
+    return Rational {Number {1, rat.P().Exp(), rat.P().Mantissa()}, Number {1, rat.Q().Exp(), rat.Q().Mantissa()}};
 }
 
 Rational RationalMath::Sin(Rational const& rat, ANGLE_TYPE angletype)
@@ -162,7 +162,7 @@ Rational RationalMath::Sin(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -182,7 +182,7 @@ Rational RationalMath::Cos(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -202,7 +202,7 @@ Rational RationalMath::Tan(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -222,7 +222,7 @@ Rational RationalMath::ASin(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -242,7 +242,7 @@ Rational RationalMath::ACos(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -262,7 +262,7 @@ Rational RationalMath::ATan(Rational const& rat, ANGLE_TYPE angletype)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -282,7 +282,7 @@ Rational RationalMath::Sinh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -302,7 +302,7 @@ Rational RationalMath::Cosh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -322,7 +322,7 @@ Rational RationalMath::Tanh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -342,7 +342,7 @@ Rational RationalMath::ASinh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -362,7 +362,7 @@ Rational RationalMath::ACosh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;
@@ -382,7 +382,7 @@ Rational RationalMath::ATanh(Rational const& rat)
         throw(error);
     }
 
-    Rational result{ prat };
+    Rational result {prat};
     destroyrat(prat);
 
     return result;

@@ -53,7 +53,7 @@ void CCalcEngine::SetRadixTypeAndNumWidth(RADIX_TYPE radixtype, NUM_WIDTH numwid
 
 int32_t CCalcEngine::DwWordBitWidthFromeNumWidth(NUM_WIDTH /*numwidth*/)
 {
-    static constexpr int nBitMax[] = { 64, 32, 16, 8 };
+    static constexpr int nBitMax[] = {64, 32, 16, 8};
     int32_t wmax = nBitMax[0];
 
     if (m_numwidth >= 0 && (size_t)m_numwidth < size(nBitMax))
@@ -65,7 +65,7 @@ int32_t CCalcEngine::DwWordBitWidthFromeNumWidth(NUM_WIDTH /*numwidth*/)
 
 uint32_t CCalcEngine::NRadixFromRadixType(RADIX_TYPE radixtype)
 {
-    static constexpr uint32_t rgnRadish[4] = { 16, 10, 8, 2 };  /* Number bases in the same order as radixtype */
+    static constexpr uint32_t rgnRadish[4] = {16, 10, 8, 2}; /* Number bases in the same order as radixtype */
     uint32_t radix = 10;
 
     // convert special bases into symbolic values

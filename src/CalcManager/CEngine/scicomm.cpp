@@ -16,26 +16,26 @@
 #include "Header Files/CalcEngine.h"
 #include "Header Files/CalcUtils.h"
 
-#define IDC_RADSIN  IDC_UNARYLAST+1
-#define IDC_RADCOS  IDC_UNARYLAST+2
-#define IDC_RADTAN  IDC_UNARYLAST+3
-#define IDC_GRADSIN IDC_UNARYLAST+4
-#define IDC_GRADCOS IDC_UNARYLAST+5
-#define IDC_GRADTAN IDC_UNARYLAST+6
+#define IDC_RADSIN IDC_UNARYLAST + 1
+#define IDC_RADCOS IDC_UNARYLAST + 2
+#define IDC_RADTAN IDC_UNARYLAST + 3
+#define IDC_GRADSIN IDC_UNARYLAST + 4
+#define IDC_GRADCOS IDC_UNARYLAST + 5
+#define IDC_GRADTAN IDC_UNARYLAST + 6
 
 using namespace std;
 using namespace CalcEngine;
 
-namespace {
+namespace
+{
     // NPrecedenceOfOp
     //
     // returns a virtual number for precedence for the operator. We expect binary operator only, otherwise the lowest number
     // 0 is returned. Higher the number, higher the precedence of the operator.
     int NPrecedenceOfOp(int nopCode)
     {
-        static uint8_t rgbPrec[] = { 0,0,  IDC_OR,0, IDC_XOR,0,  IDC_AND,1,
-            IDC_ADD,2, IDC_SUB,2,    IDC_RSHF,3, IDC_LSHF,3,
-            IDC_MOD,3, IDC_DIV,3, IDC_MUL,3,  IDC_PWR,4,   IDC_ROOT, 4 };
+        static uint8_t rgbPrec[] = {0, 0,        IDC_OR, 0,       IDC_XOR, 0,       IDC_AND, 1,       IDC_ADD, 2,       IDC_SUB, 2,        IDC_RSHF,
+                                    3, IDC_LSHF, 3,      IDC_MOD, 3,       IDC_DIV, 3,       IDC_MUL, 3,       IDC_PWR, 4,       IDC_ROOT, 4};
         unsigned int iPrec;
 
         iPrec = 0;
@@ -48,7 +48,6 @@ namespace {
             iPrec = 0;
         }
         return rgbPrec[iPrec + 1];
-
     }
 }
 
@@ -96,7 +95,7 @@ void CCalcEngine::ProcessCommand(OpCode wParam)
 
 void CCalcEngine::ProcessCommandWorker(OpCode wParam)
 {
-    int            nx, ni;
+    int nx, ni;
 
     // Save the last command.  Some commands are not saved in this manor, these
     // commands are:
@@ -131,18 +130,13 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
     // Toggle Record/Display mode if appropriate.
     if (m_bRecord)
     {
-        if (IsOpInRange(wParam, IDC_AND, IDC_MMINUS) ||
-            IsOpInRange(wParam, IDC_OPENP, IDC_CLOSEP) ||
-            IsOpInRange(wParam, IDM_HEX, IDM_BIN) ||
-            IsOpInRange(wParam, IDM_QWORD, IDM_BYTE) ||
-            IsOpInRange(wParam, IDM_DEG, IDM_GRAD) ||
-            IsOpInRange(wParam, IDC_BINEDITSTART, IDC_BINEDITSTART + 63) ||
-            (IDC_INV == wParam) ||
-            (IDC_SIGN == wParam && 10 != m_radix))
+        if (IsOpInRange(wParam, IDC_AND, IDC_MMINUS) || IsOpInRange(wParam, IDC_OPENP, IDC_CLOSEP) || IsOpInRange(wParam, IDM_HEX, IDM_BIN)
+            || IsOpInRange(wParam, IDM_QWORD, IDM_BYTE) || IsOpInRange(wParam, IDM_DEG, IDM_GRAD)
+            || IsOpInRange(wParam, IDC_BINEDITSTART, IDC_BINEDITSTART + 63) || (IDC_INV == wParam) || (IDC_SIGN == wParam && 10 != m_radix))
         {
             m_bRecord = false;
             m_currentVal = m_input.ToRational(m_radix, m_precision);
-            DisplayNum();   // Causes 3.000 to shrink to 3. on first op.
+            DisplayNum(); // Causes 3.000 to shrink to 3. on first op.
         }
     }
     else
@@ -247,9 +241,9 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
             else
             {
                 /* do the last operation and then if the precedence array is not
-                * empty or the top is not the '(' demarcator then pop the top
-                * of the array and recheck precedence against the new operator
-                */
+                 * empty or the top is not the '(' demarcator then pop the top
+                 * of the array and recheck precedence against the new operator
+                 */
                 m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
                 m_nPrevOpCode = m_nOpCode;
 
@@ -278,7 +272,6 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
                     m_HistoryCollector.PopLastOpndStart();
                     goto DoPrecedenceCheckAgain;
                 }
-
             }
         }
 
@@ -328,8 +321,7 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
 
         m_currentVal = SciCalcFunctions(m_currentVal, (uint32_t)wParam);
 
-        if (m_bError)
-            return;
+        if (m_bError) return;
 
         /* Display the result, reset flags, and reset indicators.     */
         DisplayNum();
@@ -343,11 +335,9 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
         /* reset the m_bInv flag and indicators if it is set
         and have been used */
 
-        if (m_bInv &&
-            ((wParam == IDC_CHOP) ||
-            (wParam == IDC_SIN) || (wParam == IDC_COS) || (wParam == IDC_TAN) ||
-                (wParam == IDC_LN) || (wParam == IDC_DMS) || (wParam == IDC_DEGREES) ||
-                (wParam == IDC_SINH) || (wParam == IDC_COSH) || (wParam == IDC_TANH)))
+        if (m_bInv
+            && ((wParam == IDC_CHOP) || (wParam == IDC_SIN) || (wParam == IDC_COS) || (wParam == IDC_TAN) || (wParam == IDC_LN) || (wParam == IDC_DMS)
+                || (wParam == IDC_DEGREES) || (wParam == IDC_SINH) || (wParam == IDC_COSH) || (wParam == IDC_TANH)))
         {
             m_bInv = false;
         }
@@ -377,214 +367,82 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
     /* Now branch off to do other commands and functions.                 */
     switch (wParam)
     {
-    case IDC_CLEAR: /* Total clear.                                       */
-    {
-        if (!m_bChangeOp)
+        case IDC_CLEAR: /* Total clear.                                       */
         {
-            // A special goody we are doing to preserve the history, if all was done was serious of unary operations last
-            CheckAndAddLastBinOpToHistory(false);
-        }
-
-        m_lastVal = 0;
-
-        m_bChangeOp = false;
-        m_precedenceOpCount = m_nTempCom = m_nLastCom = m_nOpCode = m_openParenCount = 0;
-        m_nPrevOpCode = 0;
-        m_bNoPrevEqu = true;
-
-
-        /* clear the parenthesis status box indicator, this will not be
-        cleared for CENTR */
-        if (nullptr != m_pCalcDisplay)
-        {
-            m_pCalcDisplay->SetParenDisplayText(L"");
-            m_pCalcDisplay->SetExpressionDisplay(make_shared<CalculatorVector<pair<wstring, int>>>(), make_shared<CalculatorVector<shared_ptr<IExpressionCommand>>>());
-        }
-
-        m_HistoryCollector.ClearHistoryLine(wstring());
-        ClearTemporaryValues();
-    }
-    break;
-
-    case IDC_CENTR: /* Clear only temporary values.                       */
-    {
-        // Clear the INV & leave (=xx indicator active
-        ClearTemporaryValues();
-    }
-
-    break;
-
-    case IDC_BACK:
-        // Divide number by the current radix and truncate.
-        // Only allow backspace if we're recording.
-        if (m_bRecord)
-        {
-            m_input.Backspace();
-            DisplayNum();
-        }
-        else
-        {
-            HandleErrorCommand(wParam);
-        }
-        break;
-
-        /* EQU enables the user to press it multiple times after and      */
-        /* operation to enable repeats of the last operation.             */
-    case IDC_EQU:
-        while (m_openParenCount > 0)
-        {
-            // when m_bError is set and m_ParNum is non-zero it goes into infinite loop
-            if (m_bError)
+            if (!m_bChangeOp)
             {
-                break;
-            }
-            // automatic closing of all the parenthesis to get a meaningful result as well as ensure data integrity
-            m_nTempCom = m_nLastCom; // Put back this last saved command to the prev state so ) can be handled properly
-            ProcessCommand(IDC_CLOSEP);
-            m_nLastCom = m_nTempCom; // Actually this is IDC_CLOSEP
-            m_nTempCom = (int)wParam; // put back in the state where last op seen was IDC_CLOSEP, and current op is IDC_EQU
-        }
-
-        if (!m_bNoPrevEqu)
-        {
-            // It is possible now unary op changed the num in screen, but still m_lastVal hasn't changed.
-            m_lastVal = m_currentVal;
-        }
-
-        /* Last thing keyed in was an operator.  Lets do the op on*/
-        /* a duplicate of the last entry.                     */
-        if (IsBinOpCode(m_nLastCom))
-        {
-            m_currentVal = m_lastVal;
-        }
-
-        if (!m_HistoryCollector.FOpndAddedToHistory())
-        {
-            m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal);
-        }
-
-        do {
-
-            if (m_nOpCode) /* Is there a valid operation around?        */
-            {
-                /* If this is the first EQU in a string, set m_holdVal=m_currentVal */
-                /* Otherwise let m_currentVal=m_holdVal.  This keeps m_currentVal constant */
-                /* through all EQUs in a row.                     */
-                if (m_bNoPrevEqu)
-                {
-                    m_holdVal = m_currentVal;
-                }
-                else
-                {
-                    m_currentVal = m_holdVal;
-                    DisplayNum(); // to update the m_numberString
-                    m_HistoryCollector.AddBinOpToHistory(m_nOpCode, false);
-                    m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal); // Adding the repeated last op to history
-                }
-
-                // Do the current or last operation.
-                m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
-                m_nPrevOpCode = m_nOpCode;
-                m_lastVal = m_currentVal;
-
-                /* Check for errors.  If this wasn't done, DisplayNum */
-                /* would immediately overwrite any error message.     */
-                if (!m_bError)
-                    DisplayNum();
-
-                /* No longer the first EQU.                       */
-                m_bNoPrevEqu = false;
-            }
-            else if (!m_bError)
-                DisplayNum();
-
-            if (m_precedenceOpCount == 0 || !m_fPrecedence)
-                break;
-
-            m_nOpCode = m_nPrecOp[--m_precedenceOpCount];
-            m_lastVal = m_precedenceVals[m_precedenceOpCount];
-
-            // Precedence Inversion check
-            ni = NPrecedenceOfOp(m_nPrevOpCode);
-            nx = NPrecedenceOfOp(m_nOpCode);
-            if (ni <= nx)
-            {
-                m_HistoryCollector.EnclosePrecInversionBrackets();
-            }
-            m_HistoryCollector.PopLastOpndStart();
-
-            m_bNoPrevEqu = true;
-        } while (m_precedenceOpCount >= 0);
-
-        if (!m_bError)
-        {
-            wstring groupedString = GroupDigitsPerRadix(m_numberString, m_radix);
-            m_HistoryCollector.CompleteHistoryLine(groupedString);
-            if (nullptr != m_pCalcDisplay)
-            {
-                m_pCalcDisplay->SetExpressionDisplay(make_shared<CalculatorVector<pair<wstring, int>>>(), make_shared<CalculatorVector<shared_ptr<IExpressionCommand>>>());
-            }
-        }
-
-        m_bChangeOp = false;
-        m_nPrevOpCode = 0;
-
-        break;
-
-    case IDC_OPENP:
-    case IDC_CLOSEP:
-        nx = 0;
-        if (wParam == IDC_OPENP)
-        {
-            nx = 1;
-        }
-
-        // -IF- the Paren holding array is full and we try to add a paren
-        // -OR- the paren holding array is empty and we try to remove a
-        //      paren
-        // -OR- the precedence holding array is full
-        if ((m_openParenCount >= MAXPRECDEPTH && nx) || (!m_openParenCount && !nx)
-            || ((m_precedenceOpCount >= MAXPRECDEPTH && m_nPrecOp[m_precedenceOpCount - 1] != 0)))
-        {
-            if (!m_openParenCount && !nx)
-            {
-                m_pCalcDisplay->OnNoRightParenAdded();
-            }
-
-            HandleErrorCommand(wParam);
-            break;
-        }
-
-        if (nx)
-        {
-            CheckAndAddLastBinOpToHistory();
-            m_HistoryCollector.AddOpenBraceToHistory();
-
-            // Open level of parentheses, save number and operation.
-            m_parenVals[m_openParenCount] = m_lastVal;
-
-            m_nOp[m_openParenCount++] = (m_bChangeOp ? m_nOpCode : 0);
-
-            /* save a special marker on the precedence array */
-            if (m_precedenceOpCount < m_nPrecOp.size())
-            {
-                m_nPrecOp[m_precedenceOpCount++] = 0;
+                // A special goody we are doing to preserve the history, if all was done was serious of unary operations last
+                CheckAndAddLastBinOpToHistory(false);
             }
 
             m_lastVal = 0;
-            if (IsBinOpCode(m_nLastCom))
+
+            m_bChangeOp = false;
+            m_precedenceOpCount = m_nTempCom = m_nLastCom = m_nOpCode = m_openParenCount = 0;
+            m_nPrevOpCode = 0;
+            m_bNoPrevEqu = true;
+
+            /* clear the parenthesis status box indicator, this will not be
+            cleared for CENTR */
+            if (nullptr != m_pCalcDisplay)
             {
-                // We want 1 + ( to start as 1 + (0. Any number you type replaces 0. But if it is 1 + 3 (, it is
-                // treated as 1 + (3
-                m_currentVal = 0;
+                m_pCalcDisplay->SetParenDisplayText(L"");
+                m_pCalcDisplay->SetExpressionDisplay(make_shared<CalculatorVector<pair<wstring, int>>>(),
+                                                     make_shared<CalculatorVector<shared_ptr<IExpressionCommand>>>());
             }
-            m_nTempCom = 0;
-            m_nOpCode = 0;
-            m_bChangeOp = false; // a ( is like starting a fresh sub equation
+
+            m_HistoryCollector.ClearHistoryLine(wstring());
+            ClearTemporaryValues();
         }
-        else
+        break;
+
+        case IDC_CENTR: /* Clear only temporary values.                       */
         {
-            // Last thing keyed in was an operator. Lets do the op on a duplicate of the last entry.
+            // Clear the INV & leave (=xx indicator active
+            ClearTemporaryValues();
+        }
+
+        break;
+
+        case IDC_BACK:
+            // Divide number by the current radix and truncate.
+            // Only allow backspace if we're recording.
+            if (m_bRecord)
+            {
+                m_input.Backspace();
+                DisplayNum();
+            }
+            else
+            {
+                HandleErrorCommand(wParam);
+            }
+            break;
+
+            /* EQU enables the user to press it multiple times after and      */
+            /* operation to enable repeats of the last operation.             */
+        case IDC_EQU:
+            while (m_openParenCount > 0)
+            {
+                // when m_bError is set and m_ParNum is non-zero it goes into infinite loop
+                if (m_bError)
+                {
+                    break;
+                }
+                // automatic closing of all the parenthesis to get a meaningful result as well as ensure data integrity
+                m_nTempCom = m_nLastCom; // Put back this last saved command to the prev state so ) can be handled properly
+                ProcessCommand(IDC_CLOSEP);
+                m_nLastCom = m_nTempCom;  // Actually this is IDC_CLOSEP
+                m_nTempCom = (int)wParam; // put back in the state where last op seen was IDC_CLOSEP, and current op is IDC_EQU
+            }
+
+            if (!m_bNoPrevEqu)
+            {
+                // It is possible now unary op changed the num in screen, but still m_lastVal hasn't changed.
+                m_lastVal = m_currentVal;
+            }
+
+            /* Last thing keyed in was an operator.  Lets do the op on*/
+            /* a duplicate of the last entry.                     */
             if (IsBinOpCode(m_nLastCom))
             {
                 m_currentVal = m_lastVal;
@@ -595,13 +453,45 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
                 m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal);
             }
 
-            // Get the operation and number and return result.
-            m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
-            m_nPrevOpCode = m_nOpCode;
-
-            // Now process the precedence stack till we get to an opcode which is zero.
-            for (m_nOpCode = m_nPrecOp[--m_precedenceOpCount]; m_nOpCode; m_nOpCode = m_nPrecOp[--m_precedenceOpCount])
+            do
             {
+                if (m_nOpCode) /* Is there a valid operation around?        */
+                {
+                    /* If this is the first EQU in a string, set m_holdVal=m_currentVal */
+                    /* Otherwise let m_currentVal=m_holdVal.  This keeps m_currentVal constant */
+                    /* through all EQUs in a row.                     */
+                    if (m_bNoPrevEqu)
+                    {
+                        m_holdVal = m_currentVal;
+                    }
+                    else
+                    {
+                        m_currentVal = m_holdVal;
+                        DisplayNum(); // to update the m_numberString
+                        m_HistoryCollector.AddBinOpToHistory(m_nOpCode, false);
+                        m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal); // Adding the repeated last op to history
+                    }
+
+                    // Do the current or last operation.
+                    m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
+                    m_nPrevOpCode = m_nOpCode;
+                    m_lastVal = m_currentVal;
+
+                    /* Check for errors.  If this wasn't done, DisplayNum */
+                    /* would immediately overwrite any error message.     */
+                    if (!m_bError) DisplayNum();
+
+                    /* No longer the first EQU.                       */
+                    m_bNoPrevEqu = false;
+                }
+                else if (!m_bError)
+                    DisplayNum();
+
+                if (m_precedenceOpCount == 0 || !m_fPrecedence) break;
+
+                m_nOpCode = m_nPrecOp[--m_precedenceOpCount];
+                m_lastVal = m_precedenceVals[m_precedenceOpCount];
+
                 // Precedence Inversion check
                 ni = NPrecedenceOfOp(m_nPrevOpCode);
                 nx = NPrecedenceOfOp(m_nOpCode);
@@ -611,182 +501,280 @@ void CCalcEngine::ProcessCommandWorker(OpCode wParam)
                 }
                 m_HistoryCollector.PopLastOpndStart();
 
-                m_lastVal = m_precedenceVals[m_precedenceOpCount];
+                m_bNoPrevEqu = true;
+            } while (m_precedenceOpCount >= 0);
 
-                m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
-                m_nPrevOpCode = m_nOpCode;
+            if (!m_bError)
+            {
+                wstring groupedString = GroupDigitsPerRadix(m_numberString, m_radix);
+                m_HistoryCollector.CompleteHistoryLine(groupedString);
+                if (nullptr != m_pCalcDisplay)
+                {
+                    m_pCalcDisplay->SetExpressionDisplay(make_shared<CalculatorVector<pair<wstring, int>>>(),
+                                                         make_shared<CalculatorVector<shared_ptr<IExpressionCommand>>>());
+                }
             }
 
-            m_HistoryCollector.AddCloseBraceToHistory();
+            m_bChangeOp = false;
+            m_nPrevOpCode = 0;
 
-            // Now get back the operation and opcode at the beginning of this parenthesis pair
+            break;
 
-            m_openParenCount -= 1;
-            m_lastVal = m_parenVals[m_openParenCount];
-            m_nOpCode = m_nOp[m_openParenCount];
-
-            // m_bChangeOp should be true if m_nOpCode is valid
-            m_bChangeOp = (m_nOpCode != 0);
-        }
-
-        // Set the "(=xx" indicator.
-        if (nullptr != m_pCalcDisplay)
-        {
-            m_pCalcDisplay->SetParenDisplayText(m_openParenCount ? to_wstring(m_openParenCount) : L"");
-        }
-
-        if (!m_bError)
-        {
-            DisplayNum();
-        }
-
-        break;
-
-        // BASE CHANGES:
-    case IDM_HEX:
-    case IDM_DEC:
-    case IDM_OCT:
-    case IDM_BIN:
-    {
-        SetRadixTypeAndNumWidth((RADIX_TYPE)(wParam - IDM_HEX), (NUM_WIDTH)-1);
-        m_HistoryCollector.UpdateHistoryExpression(m_radix, m_precision);
-        break;
-    }
-
-    case IDM_QWORD:
-    case IDM_DWORD:
-    case IDM_WORD:
-    case IDM_BYTE:
-        if (m_bRecord)
-        {
-            m_currentVal = m_input.ToRational(m_radix, m_precision);
-            m_bRecord = false;
-        }
-
-        // Compat. mode BaseX: Qword, Dword, Word, Byte
-        SetRadixTypeAndNumWidth((RADIX_TYPE)-1, (NUM_WIDTH)(wParam - IDM_QWORD));
-        break;
-
-    case IDM_DEG:
-    case IDM_RAD:
-    case IDM_GRAD:
-        m_angletype = static_cast<ANGLE_TYPE>(wParam - IDM_DEG);
-        break;
-
-    case IDC_SIGN:
-    {
-        if (m_bRecord)
-        {
-            if (m_input.TryToggleSign(m_fIntegerMode, m_maxDecimalValueStrings[m_numwidth]))
+        case IDC_OPENP:
+        case IDC_CLOSEP:
+            nx = 0;
+            if (wParam == IDC_OPENP)
             {
-                DisplayNum();
+                nx = 1;
+            }
+
+            // -IF- the Paren holding array is full and we try to add a paren
+            // -OR- the paren holding array is empty and we try to remove a
+            //      paren
+            // -OR- the precedence holding array is full
+            if ((m_openParenCount >= MAXPRECDEPTH && nx) || (!m_openParenCount && !nx)
+                || ((m_precedenceOpCount >= MAXPRECDEPTH && m_nPrecOp[m_precedenceOpCount - 1] != 0)))
+            {
+                if (!m_openParenCount && !nx)
+                {
+                    m_pCalcDisplay->OnNoRightParenAdded();
+                }
+
+                HandleErrorCommand(wParam);
+                break;
+            }
+
+            if (nx)
+            {
+                CheckAndAddLastBinOpToHistory();
+                m_HistoryCollector.AddOpenBraceToHistory();
+
+                // Open level of parentheses, save number and operation.
+                m_parenVals[m_openParenCount] = m_lastVal;
+
+                m_nOp[m_openParenCount++] = (m_bChangeOp ? m_nOpCode : 0);
+
+                /* save a special marker on the precedence array */
+                if (m_precedenceOpCount < m_nPrecOp.size())
+                {
+                    m_nPrecOp[m_precedenceOpCount++] = 0;
+                }
+
+                m_lastVal = 0;
+                if (IsBinOpCode(m_nLastCom))
+                {
+                    // We want 1 + ( to start as 1 + (0. Any number you type replaces 0. But if it is 1 + 3 (, it is
+                    // treated as 1 + (3
+                    m_currentVal = 0;
+                }
+                m_nTempCom = 0;
+                m_nOpCode = 0;
+                m_bChangeOp = false; // a ( is like starting a fresh sub equation
             }
             else
             {
-                HandleErrorCommand(wParam);
+                // Last thing keyed in was an operator. Lets do the op on a duplicate of the last entry.
+                if (IsBinOpCode(m_nLastCom))
+                {
+                    m_currentVal = m_lastVal;
+                }
+
+                if (!m_HistoryCollector.FOpndAddedToHistory())
+                {
+                    m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal);
+                }
+
+                // Get the operation and number and return result.
+                m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
+                m_nPrevOpCode = m_nOpCode;
+
+                // Now process the precedence stack till we get to an opcode which is zero.
+                for (m_nOpCode = m_nPrecOp[--m_precedenceOpCount]; m_nOpCode; m_nOpCode = m_nPrecOp[--m_precedenceOpCount])
+                {
+                    // Precedence Inversion check
+                    ni = NPrecedenceOfOp(m_nPrevOpCode);
+                    nx = NPrecedenceOfOp(m_nOpCode);
+                    if (ni <= nx)
+                    {
+                        m_HistoryCollector.EnclosePrecInversionBrackets();
+                    }
+                    m_HistoryCollector.PopLastOpndStart();
+
+                    m_lastVal = m_precedenceVals[m_precedenceOpCount];
+
+                    m_currentVal = DoOperation(m_nOpCode, m_currentVal, m_lastVal);
+                    m_nPrevOpCode = m_nOpCode;
+                }
+
+                m_HistoryCollector.AddCloseBraceToHistory();
+
+                // Now get back the operation and opcode at the beginning of this parenthesis pair
+
+                m_openParenCount -= 1;
+                m_lastVal = m_parenVals[m_openParenCount];
+                m_nOpCode = m_nOp[m_openParenCount];
+
+                // m_bChangeOp should be true if m_nOpCode is valid
+                m_bChangeOp = (m_nOpCode != 0);
             }
+
+            // Set the "(=xx" indicator.
+            if (nullptr != m_pCalcDisplay)
+            {
+                m_pCalcDisplay->SetParenDisplayText(m_openParenCount ? to_wstring(m_openParenCount) : L"");
+            }
+
+            if (!m_bError)
+            {
+                DisplayNum();
+            }
+
+            break;
+
+            // BASE CHANGES:
+        case IDM_HEX:
+        case IDM_DEC:
+        case IDM_OCT:
+        case IDM_BIN:
+        {
+            SetRadixTypeAndNumWidth((RADIX_TYPE)(wParam - IDM_HEX), (NUM_WIDTH)-1);
+            m_HistoryCollector.UpdateHistoryExpression(m_radix, m_precision);
             break;
         }
 
-        // Doing +/- while in Record mode is not a unary operation
-        if (IsBinOpCode(m_nLastCom))
+        case IDM_QWORD:
+        case IDM_DWORD:
+        case IDM_WORD:
+        case IDM_BYTE:
+            if (m_bRecord)
+            {
+                m_currentVal = m_input.ToRational(m_radix, m_precision);
+                m_bRecord = false;
+            }
+
+            // Compat. mode BaseX: Qword, Dword, Word, Byte
+            SetRadixTypeAndNumWidth((RADIX_TYPE)-1, (NUM_WIDTH)(wParam - IDM_QWORD));
+            break;
+
+        case IDM_DEG:
+        case IDM_RAD:
+        case IDM_GRAD:
+            m_angletype = static_cast<ANGLE_TYPE>(wParam - IDM_DEG);
+            break;
+
+        case IDC_SIGN:
         {
-            m_currentVal = m_lastVal;
-        }
+            if (m_bRecord)
+            {
+                if (m_input.TryToggleSign(m_fIntegerMode, m_maxDecimalValueStrings[m_numwidth]))
+                {
+                    DisplayNum();
+                }
+                else
+                {
+                    HandleErrorCommand(wParam);
+                }
+                break;
+            }
 
-        if (!m_HistoryCollector.FOpndAddedToHistory())
-        {
-            m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal);
-        }
+            // Doing +/- while in Record mode is not a unary operation
+            if (IsBinOpCode(m_nLastCom))
+            {
+                m_currentVal = m_lastVal;
+            }
 
-        m_currentVal = -(m_currentVal);
+            if (!m_HistoryCollector.FOpndAddedToHistory())
+            {
+                m_HistoryCollector.AddOpndToHistory(m_numberString, m_currentVal);
+            }
 
-        DisplayNum();
-        m_HistoryCollector.AddUnaryOpToHistory(IDC_SIGN, m_bInv, m_angletype);
-    }
-    break;
-
-    case IDC_RECALL:
-
-        if (m_bSetCalcState)
-        {
-            // Not a Memory recall. set the result
-            m_bSetCalcState = false;
-        }
-        else
-        {
-            // Recall immediate memory value.
-            m_currentVal = *m_memoryValue;
-        }
-        CheckAndAddLastBinOpToHistory();
-        DisplayNum();
-        break;
-
-    case IDC_MPLUS:
-    {
-        /* MPLUS adds m_currentVal to immediate memory and kills the "mem"   */
-        /* indicator if the result is zero.                           */
-        Rational result = *m_memoryValue + m_currentVal;
-        m_memoryValue = make_unique<Rational>(TruncateNumForIntMath(result)); // Memory should follow the current int mode
-
-        break;
-    }
-    case IDC_MMINUS:
-    {
-        /* MMINUS subtracts m_currentVal to immediate memory and kills the "mem"   */
-        /* indicator if the result is zero.                           */
-        Rational result = *m_memoryValue - m_currentVal;
-        m_memoryValue = make_unique<Rational>(TruncateNumForIntMath(result));
-
-        break;
-    }
-    case IDC_STORE:
-    case IDC_MCLEAR:
-        m_memoryValue = make_unique<Rational>(wParam == IDC_STORE ? TruncateNumForIntMath(m_currentVal) : 0);
-        break;
-
-    case IDC_PI:
-        if (!m_fIntegerMode)
-        {
-            CheckAndAddLastBinOpToHistory(); // pi is like entering the number
-            m_currentVal = Rational{ (m_bInv ? two_pi : pi) };
+            m_currentVal = -(m_currentVal);
 
             DisplayNum();
-            m_bInv = false;
-            break;
+            m_HistoryCollector.AddUnaryOpToHistory(IDC_SIGN, m_bInv, m_angletype);
         }
-        HandleErrorCommand(wParam);
         break;
 
-    case IDC_FE:
-        // Toggle exponential notation display.
-        m_nFE = NUMOBJ_FMT(!(int)m_nFE);
-        DisplayNum();
-        break;
+        case IDC_RECALL:
 
-    case IDC_EXP:
-        if (m_bRecord && !m_fIntegerMode && m_input.TryBeginExponent())
-        {
+            if (m_bSetCalcState)
+            {
+                // Not a Memory recall. set the result
+                m_bSetCalcState = false;
+            }
+            else
+            {
+                // Recall immediate memory value.
+                m_currentVal = *m_memoryValue;
+            }
+            CheckAndAddLastBinOpToHistory();
             DisplayNum();
             break;
-        }
-        HandleErrorCommand(wParam);
-        break;
 
-    case IDC_PNT:
-        if (m_bRecord && !m_fIntegerMode && m_input.TryAddDecimalPt())
+        case IDC_MPLUS:
         {
-            DisplayNum();
+            /* MPLUS adds m_currentVal to immediate memory and kills the "mem"   */
+            /* indicator if the result is zero.                           */
+            Rational result = *m_memoryValue + m_currentVal;
+            m_memoryValue = make_unique<Rational>(TruncateNumForIntMath(result)); // Memory should follow the current int mode
+
             break;
         }
-        HandleErrorCommand(wParam);
-        break;
+        case IDC_MMINUS:
+        {
+            /* MMINUS subtracts m_currentVal to immediate memory and kills the "mem"   */
+            /* indicator if the result is zero.                           */
+            Rational result = *m_memoryValue - m_currentVal;
+            m_memoryValue = make_unique<Rational>(TruncateNumForIntMath(result));
 
-    case IDC_INV:
-        m_bInv = !m_bInv;
-        break;
+            break;
+        }
+        case IDC_STORE:
+        case IDC_MCLEAR:
+            m_memoryValue = make_unique<Rational>(wParam == IDC_STORE ? TruncateNumForIntMath(m_currentVal) : 0);
+            break;
+
+        case IDC_PI:
+            if (!m_fIntegerMode)
+            {
+                CheckAndAddLastBinOpToHistory(); // pi is like entering the number
+                m_currentVal = Rational {(m_bInv ? two_pi : pi)};
+
+                DisplayNum();
+                m_bInv = false;
+                break;
+            }
+            HandleErrorCommand(wParam);
+            break;
+
+        case IDC_FE:
+            // Toggle exponential notation display.
+            m_nFE = NUMOBJ_FMT(!(int)m_nFE);
+            DisplayNum();
+            break;
+
+        case IDC_EXP:
+            if (m_bRecord && !m_fIntegerMode && m_input.TryBeginExponent())
+            {
+                DisplayNum();
+                break;
+            }
+            HandleErrorCommand(wParam);
+            break;
+
+        case IDC_PNT:
+            if (m_bRecord && !m_fIntegerMode && m_input.TryAddDecimalPt())
+            {
+                DisplayNum();
+                break;
+            }
+            HandleErrorCommand(wParam);
+            break;
+
+        case IDC_INV:
+            m_bInv = !m_bInv;
+            break;
     }
-
 }
 
 // CheckAndAddLastBinOpToHistory
@@ -809,7 +797,6 @@ void CCalcEngine::CheckAndAddLastBinOpToHistory(bool addToHistory)
             // So erase the last operand
             m_HistoryCollector.RemoveLastOpndFromHistory();
         }
-
     }
     else if (m_HistoryCollector.FOpndAddedToHistory() && !m_bError)
     {
@@ -818,8 +805,7 @@ void CCalcEngine::CheckAndAddLastBinOpToHistory(bool addToHistory)
         // Let us make a current value =. So in case of 4 SQRT (or a equation under braces) and then a new equation is started, we can just form
         // a useful equation of sqrt(4) = 2 and continue a new equation from now on. But no point in doing this for things like
         // MR, SUM etc. All you will get is 5 = 5 kind of no useful equation.
-        if ((IsUnaryOpCode(m_nLastCom) || IDC_SIGN == m_nLastCom || IDC_CLOSEP == m_nLastCom) &&
-            0 == m_openParenCount)
+        if ((IsUnaryOpCode(m_nLastCom) || IDC_SIGN == m_nLastCom || IDC_CLOSEP == m_nLastCom) && 0 == m_openParenCount)
         {
             if (addToHistory)
             {
@@ -859,45 +845,44 @@ void CCalcEngine::DisplayAnnounceBinaryOperator()
 // we have this separate table to get its localized name and for its Inv function if it exists.
 typedef struct
 {
-    int idsFunc;    // index of string for the unary op function. Can be NULL, in which case it same as button name
-    int idsFuncInv; // index of string for Inv of unary op. Can be NULL, in case it is same as idsFunc
-    bool fDontUseInExpEval;  // true if this cant be used in reverse direction as well, ie. during expression evaluation
+    int idsFunc;            // index of string for the unary op function. Can be NULL, in which case it same as button name
+    int idsFuncInv;         // index of string for Inv of unary op. Can be NULL, in case it is same as idsFunc
+    bool fDontUseInExpEval; // true if this cant be used in reverse direction as well, ie. during expression evaluation
 } UFNE;
 
 // Table for each unary operator
-static const UFNE rgUfne[] =
-{
-    /* IDC_CHOP  */{ 0, IDS_FRAC, false },
-    /* IDC_ROL   */{ 0, 0, true },
-    /* IDC_ROR   */{ 0, 0, true },
+static const UFNE rgUfne[] = {
+    /* IDC_CHOP  */ {0, IDS_FRAC, false},
+    /* IDC_ROL   */ {0, 0, true},
+    /* IDC_ROR   */ {0, 0, true},
 
-    /* IDC_COM   */{ 0, 0, true },
-    /* IDC_SIN    */{ IDS_SIND, IDS_ASIND, false },   // default in this table is degrees for sin,cos & tan
-    /* IDC_COS   */{ IDS_COSD, IDS_ACOSD, false },
-    /* IDC_TAN   */{ IDS_TAND, IDS_ATAND, false },
+    /* IDC_COM   */ {0, 0, true},
+    /* IDC_SIN    */ {IDS_SIND, IDS_ASIND, false}, // default in this table is degrees for sin,cos & tan
+    /* IDC_COS   */ {IDS_COSD, IDS_ACOSD, false},
+    /* IDC_TAN   */ {IDS_TAND, IDS_ATAND, false},
 
-    /* IDC_SINH    */{ 0, IDS_ASINH, false },
-    /* IDC_COSH   */{ 0, IDS_ACOSH, false },
-    /* IDC_TANH   */{ 0, IDS_ATANH, false },
+    /* IDC_SINH    */ {0, IDS_ASINH, false},
+    /* IDC_COSH   */ {0, IDS_ACOSH, false},
+    /* IDC_TANH   */ {0, IDS_ATANH, false},
 
-    /* IDC_LN     */{ 0, IDS_POWE, false },
-    /* IDC_LOG   */{ 0, 0, false },
-    /* IDC_SQRT */{ 0, 0, false },
-    /* IDC_SQR   */{ IDS_SQR, 0, false },
-    /* IDC_CUB   */{ IDS_CUBE, 0, false },
-    /* IDC_FAC   */{ IDS_FACT, 0, false },
-    /* IDC_REC   */{ IDS_REC, 0, false },
-    /* IDC_DMS  */{ 0, IDS_DEGREES, false },
-    /* IDC_CUBEROOT  */{ 0, 0, false },
-    /* IDC_POW10  */{ 0, 0, false },
-    /* IDC_PERCENT  */{ 0, 0, false },
+    /* IDC_LN     */ {0, IDS_POWE, false},
+    /* IDC_LOG   */ {0, 0, false},
+    /* IDC_SQRT */ {0, 0, false},
+    /* IDC_SQR   */ {IDS_SQR, 0, false},
+    /* IDC_CUB   */ {IDS_CUBE, 0, false},
+    /* IDC_FAC   */ {IDS_FACT, 0, false},
+    /* IDC_REC   */ {IDS_REC, 0, false},
+    /* IDC_DMS  */ {0, IDS_DEGREES, false},
+    /* IDC_CUBEROOT  */ {0, 0, false},
+    /* IDC_POW10  */ {0, 0, false},
+    /* IDC_PERCENT  */ {0, 0, false},
 
-    /* IDC_RADSIN  */{ IDS_SINR, IDS_ASINR, false },
-    /* IDC_RADCOS  */{ IDS_COSR, IDS_ACOSR, false },
-    /* IDC_RADTAN  */{ IDS_TANR, IDS_ATANR, false },
-    /* IDC_GRADCOS  */{ IDS_SING, IDS_ASING, false },
-    /* IDC_GRADCOS  */{ IDS_COSG, IDS_ACOSG, false },
-    /* IDC_GRADTAN  */{ IDS_TANG, IDS_ATANG, false },
+    /* IDC_RADSIN  */ {IDS_SINR, IDS_ASINR, false},
+    /* IDC_RADCOS  */ {IDS_COSR, IDS_ACOSR, false},
+    /* IDC_RADTAN  */ {IDS_TANR, IDS_ATANR, false},
+    /* IDC_GRADCOS  */ {IDS_SING, IDS_ASING, false},
+    /* IDC_GRADCOS  */ {IDS_COSG, IDS_ACOSG, false},
+    /* IDC_GRADTAN  */ {IDS_TANG, IDS_ATANG, false},
 };
 
 wstring_view CCalcEngine::OpCodeToUnaryString(int nOpCode, bool fInv, ANGLE_TYPE angletype)
@@ -917,30 +902,30 @@ wstring_view CCalcEngine::OpCodeToUnaryString(int nOpCode, bool fInv, ANGLE_TYPE
     {
         switch (nOpCode)
         {
-        case IDC_SIN:
-            nOpCode = IDC_RADSIN;
-            break;
-        case IDC_COS:
-            nOpCode = IDC_RADCOS;
-            break;
-        case IDC_TAN:
-            nOpCode = IDC_RADTAN;
-            break;
+            case IDC_SIN:
+                nOpCode = IDC_RADSIN;
+                break;
+            case IDC_COS:
+                nOpCode = IDC_RADCOS;
+                break;
+            case IDC_TAN:
+                nOpCode = IDC_RADTAN;
+                break;
         }
     }
     else if (ANGLE_GRAD == angletype)
     {
         switch (nOpCode)
         {
-        case IDC_SIN:
-            nOpCode = IDC_GRADSIN;
-            break;
-        case IDC_COS:
-            nOpCode = IDC_GRADCOS;
-            break;
-        case IDC_TAN:
-            nOpCode = IDC_GRADTAN;
-            break;
+            case IDC_SIN:
+                nOpCode = IDC_GRADSIN;
+                break;
+            case IDC_COS:
+                nOpCode = IDC_GRADCOS;
+                break;
+            case IDC_TAN:
+                nOpCode = IDC_GRADTAN;
+                break;
         }
     }
 
@@ -978,34 +963,33 @@ int CCalcEngine::IdcSetAngleTypeDecMode(int idc)
 
     switch (idc)
     {
-    case IDC_RADSIN:
-        idcAngleCmd = IDM_RAD;
-        idc = IDC_SIN;
-        break;
-    case IDC_RADCOS:
-        idcAngleCmd = IDM_RAD;
-        idc = IDC_COS;
-        break;
-    case IDC_RADTAN:
-        idcAngleCmd = IDM_RAD;
-        idc = IDC_TAN;
-        break;
-    case IDC_GRADSIN:
-        idcAngleCmd = IDM_GRAD;
-        idc = IDC_SIN;
-        break;
-    case IDC_GRADCOS:
-        idcAngleCmd = IDM_GRAD;
-        idc = IDC_COS;
-        break;
-    case IDC_GRADTAN:
-        idcAngleCmd = IDM_GRAD;
-        idc = IDC_TAN;
-        break;
+        case IDC_RADSIN:
+            idcAngleCmd = IDM_RAD;
+            idc = IDC_SIN;
+            break;
+        case IDC_RADCOS:
+            idcAngleCmd = IDM_RAD;
+            idc = IDC_COS;
+            break;
+        case IDC_RADTAN:
+            idcAngleCmd = IDM_RAD;
+            idc = IDC_TAN;
+            break;
+        case IDC_GRADSIN:
+            idcAngleCmd = IDM_GRAD;
+            idc = IDC_SIN;
+            break;
+        case IDC_GRADCOS:
+            idcAngleCmd = IDM_GRAD;
+            idc = IDC_COS;
+            break;
+        case IDC_GRADTAN:
+            idcAngleCmd = IDM_GRAD;
+            idc = IDC_TAN;
+            break;
     }
     ProcessCommand(idcAngleCmd);
     return idc;
-
 }
 
 bool CCalcEngine::IsCurrentTooBigForTrig()
@@ -1036,7 +1020,7 @@ wstring CCalcEngine::GetCurrentResultForRadix(uint32_t radix, int32_t precision)
 
 wstring CCalcEngine::GetStringForDisplay(Rational const& rat, uint32_t radix)
 {
-    wstring result{};
+    wstring result {};
     // Check for standard\scientific mode
     if (!m_fIntegerMode)
     {

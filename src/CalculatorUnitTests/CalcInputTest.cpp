@@ -12,10 +12,7 @@ namespace CalculatorUnitTests
 {
     TEST_CLASS(CalcInputTest)
     {
-        TEST_METHOD_INITIALIZE(CommonSetup)
-        {
-            m_calcInput = CalcEngine::CalcInput(L'.');
-        }
+        TEST_METHOD_INITIALIZE(CommonSetup) { m_calcInput = CalcEngine::CalcInput(L'.'); }
         TEST_METHOD_CLEANUP(Cleanup)
         {
             m_calcInput.Clear();
@@ -173,7 +170,8 @@ namespace CalculatorUnitTests
             m_calcInput.Backspace();
             m_calcInput.TryToggleSign(true, L"127");
             VERIFY_IS_FALSE(m_calcInput.TryAddDigit(9, 10, true, L"127", 8, 2), L"Negative value: verify we cannot add a digit if digit exceeds max value.");
-            VERIFY_IS_TRUE(m_calcInput.TryAddDigit(8, 10, true, L"127", 8, 2), L"Negative value: verify we can add a digit if digit does not exceed max value.");
+            VERIFY_IS_TRUE(m_calcInput.TryAddDigit(8, 10, true, L"127", 8, 2),
+                           L"Negative value: verify we can add a digit if digit does not exceed max value.");
         }
 
         TEST_METHOD(TryAddDecimalPtEmpty)
@@ -260,10 +258,7 @@ namespace CalculatorUnitTests
             VERIFY_ARE_EQUAL(L"0,", m_calcInput.ToString(10), L"Verify new decimal point.");
         }
 
-        TEST_METHOD(ToStringEmpty)
-        {
-            VERIFY_ARE_EQUAL(L"0", m_calcInput.ToString(10), L"Verify ToString of empty value.");
-        }
+        TEST_METHOD(ToStringEmpty) { VERIFY_ARE_EQUAL(L"0", m_calcInput.ToString(10), L"Verify ToString of empty value."); }
         TEST_METHOD(ToStringNegative)
         {
             m_calcInput.TryAddDigit(1, 10, false, L"999", 64, 32);
@@ -305,7 +300,7 @@ namespace CalculatorUnitTests
         }
         TEST_METHOD(ToStringBaseTooLong)
         {
-            wstring maxStr{};
+            wstring maxStr {};
             for (size_t i = 0; i < MAX_STRLEN + 1; i++)
             {
                 maxStr += L"1";
@@ -318,7 +313,7 @@ namespace CalculatorUnitTests
         {
             m_calcInput.TryAddDigit(1, 10, false, L"999", 64, 32);
             m_calcInput.TryBeginExponent();
-            wstring maxStr{ L"11" };
+            wstring maxStr {L"11"};
             bool exponentCapped = false;
             for (size_t i = 0; i < MAX_STRLEN + 1; i++)
             {

@@ -32,11 +32,11 @@ void OverflowTextBlock::OnApplyTemplate()
 {
     assert(((m_scrollLeft == nullptr) && (m_scrollRight == nullptr)) || ((m_scrollLeft != nullptr) && (m_scrollRight != nullptr)));
 
-    m_expressionContainer = safe_cast<ScrollViewer^>(GetTemplateChild("expressionContainer"));
+    m_expressionContainer = safe_cast<ScrollViewer ^>(GetTemplateChild("expressionContainer"));
     m_expressionContainer->ChangeView(m_expressionContainer->ExtentWidth - m_expressionContainer->ViewportWidth, nullptr, nullptr);
 
-    m_scrollLeft = safe_cast<Button^>(GetTemplateChild("scrollLeft"));
-    m_scrollRight = safe_cast<Button^>(GetTemplateChild("scrollRight"));
+    m_scrollLeft = safe_cast<Button ^>(GetTemplateChild("scrollLeft"));
+    m_scrollRight = safe_cast<Button ^>(GetTemplateChild("scrollRight"));
 
     m_scrollLeftClickEventToken = m_scrollLeft->Click += ref new RoutedEventHandler(this, &OverflowTextBlock::OnScrollClick);
     m_scrollRightClickEventToken = m_scrollRight->Click += ref new RoutedEventHandler(this, &OverflowTextBlock::OnScrollClick);
@@ -44,16 +44,16 @@ void OverflowTextBlock::OnApplyTemplate()
     m_scrollingLeft = false;
     m_scrollingRight = false;
 
-    auto borderContainer = safe_cast<Border^>(GetTemplateChild("expressionborder"));
+    auto borderContainer = safe_cast<Border ^>(GetTemplateChild("expressionborder"));
     m_pointerEnteredEventToken = borderContainer->PointerEntered += ref new PointerEventHandler(this, &OverflowTextBlock::OnPointerEntered);
     m_pointerExitedEventToken = borderContainer->PointerExited += ref new PointerEventHandler(this, &OverflowTextBlock::OnPointerExited);
 
-    m_listView = safe_cast<ListView^>(GetTemplateChild("TokenList"));
+    m_listView = safe_cast<ListView ^>(GetTemplateChild("TokenList"));
 
     UpdateAllState();
 }
 
-AutomationPeer^ OverflowTextBlock::OnCreateAutomationPeer()
+AutomationPeer ^ OverflowTextBlock::OnCreateAutomationPeer()
 {
     return ref new OverflowTextBlockAutomationPeer(this);
 }
@@ -71,7 +71,7 @@ void OverflowTextBlock::OnTokensUpdatedPropertyChanged(bool /*oldValue*/, bool n
         }
     }
     AutomationProperties::SetAccessibilityView(this,
-        m_listView != nullptr && m_listView->Items->Size > 0 ? AccessibilityView::Control : AccessibilityView::Raw);
+                                               m_listView != nullptr && m_listView->Items->Size > 0 ? AccessibilityView::Control : AccessibilityView::Raw);
 }
 
 void OverflowTextBlock::UpdateAllState()
@@ -115,9 +115,9 @@ void OverflowTextBlock::ScrollRight()
     }
 }
 
-void OverflowTextBlock::OnScrollClick(_In_ Object^ sender, _In_ RoutedEventArgs^)
+void OverflowTextBlock::OnScrollClick(_In_ Object ^ sender, _In_ RoutedEventArgs ^)
 {
-    auto clicked = safe_cast<Button^>(sender);
+    auto clicked = safe_cast<Button ^>(sender);
     if (clicked == m_scrollLeft)
     {
         ScrollLeft();
@@ -128,7 +128,7 @@ void OverflowTextBlock::OnScrollClick(_In_ Object^ sender, _In_ RoutedEventArgs^
     }
 }
 
-void OverflowTextBlock::OnPointerEntered(_In_ Object^, _In_ PointerRoutedEventArgs^ e)
+void OverflowTextBlock::OnPointerEntered(_In_ Object ^, _In_ PointerRoutedEventArgs ^ e)
 {
     if (e->Pointer->PointerDeviceType == PointerDeviceType::Mouse)
     {
@@ -136,7 +136,7 @@ void OverflowTextBlock::OnPointerEntered(_In_ Object^, _In_ PointerRoutedEventAr
     }
 }
 
-void OverflowTextBlock::OnPointerExited(_In_ Object^, _In_ PointerRoutedEventArgs^ e)
+void OverflowTextBlock::OnPointerExited(_In_ Object ^, _In_ PointerRoutedEventArgs ^ e)
 {
     if (e->Pointer->PointerDeviceType == PointerDeviceType::Mouse)
     {
@@ -152,7 +152,8 @@ void OverflowTextBlock::UpdateScrollButtons()
         ShowHideScrollButtons(::Visibility::Collapsed, ::Visibility::Collapsed);
     }
     // We have more number on both side. Show both arrows
-    else if ((m_expressionContainer->HorizontalOffset > 0) && (m_expressionContainer->HorizontalOffset < (m_expressionContainer->ExtentWidth - m_expressionContainer->ViewportWidth)))
+    else if ((m_expressionContainer->HorizontalOffset > 0)
+             && (m_expressionContainer->HorizontalOffset < (m_expressionContainer->ExtentWidth - m_expressionContainer->ViewportWidth)))
     {
         ShowHideScrollButtons(::Visibility::Visible, ::Visibility::Visible);
     }
@@ -199,7 +200,7 @@ void OverflowTextBlock::UnregisterEventHandlers()
         m_scrollRight->Click -= m_scrollRightClickEventToken;
     }
 
-    auto borderContainer = safe_cast<Border^>(GetTemplateChild("expressionborder"));
+    auto borderContainer = safe_cast<Border ^>(GetTemplateChild("expressionborder"));
 
     // Adding an extra check, in case the returned template is null
     if (borderContainer != nullptr)

@@ -7,10 +7,7 @@ using namespace std;
 
 namespace CalcEngine
 {
-    Rational::Rational() noexcept :
-        m_p{},
-        m_q{ 1, 0, { 1 } }
-    {}
+    Rational::Rational() noexcept : m_p {}, m_q {1, 0, {1}} {}
 
     Rational::Rational(Number const& n) noexcept
     {
@@ -21,20 +18,17 @@ namespace CalcEngine
         }
 
         m_p = Number(n.Sign(), 0, n.Mantissa());
-        m_q = Number(1, qExp, { 1 });
+        m_q = Number(1, qExp, {1});
     }
 
-    Rational::Rational(Number const& p, Number const& q) noexcept :
-        m_p{ p },
-        m_q{ q }
-    {}
+    Rational::Rational(Number const& p, Number const& q) noexcept : m_p {p}, m_q {q} {}
 
     Rational::Rational(int32_t i)
     {
         PRAT pr = i32torat(static_cast<int32_t>(i));
 
-        m_p = Number{ pr->pp };
-        m_q = Number{ pr->pq };
+        m_p = Number {pr->pp};
+        m_q = Number {pr->pq};
 
         destroyrat(pr);
     }
@@ -43,8 +37,8 @@ namespace CalcEngine
     {
         PRAT pr = Ui32torat(static_cast<uint32_t>(ui));
 
-        m_p = Number{ pr->pp };
-        m_q = Number{ pr->pq };
+        m_p = Number {pr->pp};
+        m_q = Number {pr->pq};
 
         destroyrat(pr);
     }
@@ -54,16 +48,13 @@ namespace CalcEngine
         uint32_t hi = HIDWORD(ui);
         uint32_t lo = LODWORD(ui);
 
-        Rational temp = (Rational{ hi } << 32) | lo;
+        Rational temp = (Rational {hi} << 32) | lo;
 
-        m_p = Number{ temp.P() };
-        m_q = Number{ temp.Q() };
+        m_p = Number {temp.P()};
+        m_q = Number {temp.Q()};
     }
 
-    Rational::Rational(PRAT prat) noexcept :
-        m_p{ Number{prat->pp} },
-        m_q{ Number{prat->pq} }
-    {}
+    Rational::Rational(PRAT prat) noexcept : m_p {Number {prat->pp}}, m_q {Number {prat->pq}} {}
 
     PRAT Rational::ToPRAT() const
     {
@@ -75,20 +66,11 @@ namespace CalcEngine
         return ret;
     }
 
-    Number const& Rational::P() const
-    {
-        return m_p;
-    }
+    Number const& Rational::P() const { return m_p; }
 
-    Number const& Rational::Q() const
-    {
-        return m_q;
-    }
+    Number const& Rational::Q() const { return m_q; }
 
-    Rational Rational::operator-() const
-    {
-        return Rational{ Number{ -1 * m_p.Sign(), m_p.Exp(), m_p.Mantissa() }, m_q };
-    }
+    Rational Rational::operator-() const { return Rational {Number {-1 * m_p.Sign(), m_p.Exp(), m_p.Mantissa()}, m_q}; }
 
     Rational& Rational::operator+=(Rational const& rhs)
     {
@@ -107,7 +89,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -130,7 +112,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -153,7 +135,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -176,7 +158,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -199,7 +181,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -222,7 +204,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -245,7 +227,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -268,7 +250,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -290,7 +272,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -312,7 +294,7 @@ namespace CalcEngine
             throw(error);
         }
 
-        *this = Rational{ lhsRat };
+        *this = Rational {lhsRat};
         destroyrat(lhsRat);
 
         return *this;
@@ -401,10 +383,7 @@ namespace CalcEngine
         return result;
     }
 
-    bool operator!=(Rational const& lhs, Rational const& rhs)
-    {
-        return !(lhs == rhs);
-    }
+    bool operator!=(Rational const& lhs, Rational const& rhs) { return !(lhs == rhs); }
 
     bool operator<(Rational const& lhs, Rational const& rhs)
     {
@@ -429,25 +408,16 @@ namespace CalcEngine
         return result;
     }
 
-    bool operator>(Rational const& lhs, Rational const& rhs)
-    {
-        return rhs < lhs;
-    }
+    bool operator>(Rational const& lhs, Rational const& rhs) { return rhs < lhs; }
 
-    bool operator<=(Rational const& lhs, Rational const& rhs)
-    {
-        return !(lhs > rhs);
-    }
+    bool operator<=(Rational const& lhs, Rational const& rhs) { return !(lhs > rhs); }
 
-    bool operator>=(Rational const& lhs, Rational const& rhs)
-    {
-        return !(lhs < rhs);
-    }
+    bool operator>=(Rational const& lhs, Rational const& rhs) { return !(lhs < rhs); }
 
     wstring Rational::ToString(uint32_t radix, NUMOBJ_FMT fmt, int32_t precision) const
     {
         PRAT rat = this->ToPRAT();
-        wstring result{};
+        wstring result {};
 
         try
         {

@@ -32,16 +32,16 @@ void OperatorTextBox::OnApplyTemplate()
     this->IsRightTapEnabled = false;
     this->IsTabStop = false;
     auto parent = VisualTreeHelper::GetParent(this);
-    ListViewItem^ listViewItem;
-    ListView^ listView;
+    ListViewItem ^ listViewItem;
+    ListView ^ listView;
     while (parent != nullptr)
     {
         if (listViewItem == nullptr)
         {
-            listViewItem = dynamic_cast<ListViewItem^>(parent);
+            listViewItem = dynamic_cast<ListViewItem ^>(parent);
         }
 
-        listView = dynamic_cast<ListView^>(parent);
+        listView = dynamic_cast<ListView ^>(parent);
         if (listView != nullptr)
         {
             break;

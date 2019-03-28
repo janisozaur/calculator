@@ -46,21 +46,14 @@ static constexpr auto CACHE_LANGCODE_KEY = L"CURRENCY_CONVERTER_LANGCODE";
 static constexpr auto CACHE_DELIMITER = L"%";
 
 static constexpr auto STATIC_DATA_FILENAME = L"CURRENCY_CONVERTER_STATIC_DATA.txt";
-static constexpr array<wstring_view, 5> STATIC_DATA_PROPERTIES = {
-    wstring_view{ L"CountryCode", 11 },
-    wstring_view{ L"CountryName", 11 },
-    wstring_view{ L"CurrencyCode", 12 },
-    wstring_view{ L"CurrencyName", 12 },
-    wstring_view{ L"CurrencySymbol", 14 }
-};
+static constexpr array<wstring_view, 5> STATIC_DATA_PROPERTIES = {wstring_view {L"CountryCode", 11}, wstring_view {L"CountryName", 11},
+                                                                  wstring_view {L"CurrencyCode", 12}, wstring_view {L"CurrencyName", 12},
+                                                                  wstring_view {L"CurrencySymbol", 14}};
 
 static constexpr auto ALL_RATIOS_DATA_FILENAME = L"CURRENCY_CONVERTER_ALL_RATIOS_DATA.txt";
 static constexpr auto RATIO_KEY = L"Rt";
 static constexpr auto CURRENCY_CODE_KEY = L"An";
-static constexpr array<wstring_view, 2> ALL_RATIOS_DATA_PROPERTIES = {
-    wstring_view{ RATIO_KEY, 2 },
-    wstring_view{ CURRENCY_CODE_KEY, 2 }
-};
+static constexpr array<wstring_view, 2> ALL_RATIOS_DATA_PROPERTIES = {wstring_view {RATIO_KEY, 2}, wstring_view {CURRENCY_CODE_KEY, 2}};
 
 static constexpr auto DEFAULT_FROM_TO_CURRENCY_FILE_URI = L"ms-appx:///DataLoaders/DefaultFromToCurrency.json";
 static constexpr auto FROM_KEY = L"from";
@@ -141,11 +134,8 @@ void CurrencyDataLoader::RegisterForNetworkBehaviorChanges()
 {
     UnregisterForNetworkBehaviorChanges();
 
-    m_networkBehaviorToken =
-        m_networkManager->NetworkBehaviorChanged += ref new NetworkBehaviorChangedHandler([this](NetworkAccessBehavior newBehavior)
-    {
-        this->OnNetworkBehaviorChanged(newBehavior);
-    });
+    m_networkBehaviorToken = m_networkManager->NetworkBehaviorChanged +=
+        ref new NetworkBehaviorChangedHandler([this](NetworkAccessBehavior newBehavior) { this->OnNetworkBehaviorChanged(newBehavior); });
 
     OnNetworkBehaviorChanged(NetworkManager::GetNetworkAccessBehavior());
 }
@@ -186,8 +176,7 @@ void CurrencyDataLoader::LoadData()
 
     if (!LoadFinished())
     {
-        create_task([this]() -> task<bool>
-        {
+        create_task([this]() -> task<bool> {
             vector<function<task<bool>()>> loadFunctions = {
                 [this]() { return TryLoadDataFromCacheAsync(); },
                 [this]() { return TryLoadDataFromWebAsync(); },
@@ -204,11 +193,13 @@ void CurrencyDataLoader::LoadData()
             }
 
             co_return didLoad;
-        }).then([this](bool didLoad)
-        {
-            UpdateDisplayedTimestamp();
-            NotifyDataLoadFinished(didLoad);
-        }, task_continuation_context::use_current());
+        })
+            .then(
+                [this](bool didLoad) {
+                    UpdateDisplayedTimestamp();
+                    NotifyDataLoadFinished(didLoad);
+                },
+                task_continuation_context::use_current());
     }
 };
 #pragma optimize("", on)
@@ -281,30 +272,22 @@ pair<wstring, wstring> CurrencyDataLoader::GetCurrencyRatioEquality(_In_ const U
                 double scale = pow(10, FORMATTER_DIGIT_COUNT);
                 double rounded = static_cast<int>(ratio * static_cast<int>(scale)) / scale;
 
-                wstring digitSymbol = wstring{ LocalizationSettings::GetInstance().GetDigitSymbolFromEnUsDigit(L'1') };
+                wstring digitSymbol = wstring {LocalizationSettings::GetInstance().GetDigitSymbolFromEnUsDigit(L'1')};
                 wstring roundedFormat = m_ratioFormatter->Format(rounded)->Data();
 
-                wstring ratioString = LocalizationStringUtil::GetLocalizedString(
-                    m_ratioFormat.c_str(),
-                    digitSymbol.c_str(),
-                    unit1.abbreviation.c_str(),
-                    roundedFormat.c_str(),
-                    unit2.abbreviation.c_str()
-                );
+                wstring ratioString = LocalizationStringUtil::GetLocalizedString(m_ratioFormat.c_str(), digitSymbol.c_str(), unit1.abbreviation.c_str(),
+                                                                                 roundedFormat.c_str(), unit2.abbreviation.c_str());
 
                 wstring accessibleRatioString = LocalizationStringUtil::GetLocalizedString(
-                    m_ratioFormat.c_str(),
-                    digitSymbol.c_str(),
-                    unit1.accessibleName.c_str(),
-                    roundedFormat.c_str(),
-                    unit2.accessibleName.c_str()
-                );
+                    m_ratioFormat.c_str(), digitSymbol.c_str(), unit1.accessibleName.c_str(), roundedFormat.c_str(), unit2.accessibleName.c_str());
 
                 return make_pair(ratioString, accessibleRatioString);
             }
         }
     }
-    catch (...) {}
+    catch (...)
+    {
+    }
 
     return make_pair(L"", L"");
 }
@@ -324,8 +307,7 @@ task<bool> CurrencyDataLoader::TryLoadDataFromCacheAsync()
 
         bool loadComplete = false;
         m_cacheTimestamp = static_cast<DateTime>(localSettings->Values->Lookup(CacheTimestampKey));
-        if (Utils::IsDateTimeOlderThan(m_cacheTimestamp, DAY_DURATION)
-            && m_networkAccessBehavior == NetworkAccessBehavior::Normal)
+        if (Utils::IsDateTimeOlderThan(m_cacheTimestamp, DAY_DURATION) && m_networkAccessBehavior == NetworkAccessBehavior::Normal)
         {
             loadComplete = co_await TryLoadDataFromWebAsync();
         }
@@ -337,7 +319,7 @@ task<bool> CurrencyDataLoader::TryLoadDataFromCacheAsync()
 
         co_return loadComplete;
     }
-    catch (Exception^ ex)
+    catch (Exception ^ ex)
     {
         TraceLogger::GetInstance().LogPlatformException(__FUNCTIONW__, ex);
         co_return false;
@@ -361,29 +343,24 @@ task<bool> CurrencyDataLoader::TryFinishLoadFromCacheAsync()
         co_return false;
     }
 
-    if (!localSettings->Values->HasKey(CacheLangcodeKey)
-        || !static_cast<String^>(localSettings->Values->Lookup(CacheLangcodeKey))->Equals(m_responseLanguage))
+    if (!localSettings->Values->HasKey(CacheLangcodeKey) || !static_cast<String ^>(localSettings->Values->Lookup(CacheLangcodeKey))->Equals(m_responseLanguage))
     {
         co_return false;
     }
 
-    StorageFolder^ localCacheFolder = ApplicationData::Current->LocalCacheFolder;
+    StorageFolder ^ localCacheFolder = ApplicationData::Current->LocalCacheFolder;
     if (localCacheFolder == nullptr)
     {
         co_return false;
     }
 
-    String^ staticDataResponse = co_await Utils::ReadFileFromFolder(localCacheFolder, StaticDataFilename);
-    String^ allRatiosResponse = co_await Utils::ReadFileFromFolder(localCacheFolder, AllRatiosDataFilename);
+    String ^ staticDataResponse = co_await Utils::ReadFileFromFolder(localCacheFolder, StaticDataFilename);
+    String ^ allRatiosResponse = co_await Utils::ReadFileFromFolder(localCacheFolder, AllRatiosDataFilename);
 
-    vector<UCM::CurrencyStaticData> staticData{};
-    CurrencyRatioMap ratioMap{};
+    vector<UCM::CurrencyStaticData> staticData {};
+    CurrencyRatioMap ratioMap {};
 
-    bool didParse = TryParseWebResponses(
-        staticDataResponse,
-        allRatiosResponse,
-        staticData,
-        ratioMap);
+    bool didParse = TryParseWebResponses(staticDataResponse, allRatiosResponse, staticData, ratioMap);
     if (!didParse)
     {
         co_return false;
@@ -406,27 +383,22 @@ task<bool> CurrencyDataLoader::TryLoadDataFromWebAsync()
             co_return false;
         }
 
-        if (m_networkAccessBehavior == NetworkAccessBehavior::Offline ||
-            (m_networkAccessBehavior == NetworkAccessBehavior::OptIn && !m_meteredOverrideSet))
+        if (m_networkAccessBehavior == NetworkAccessBehavior::Offline || (m_networkAccessBehavior == NetworkAccessBehavior::OptIn && !m_meteredOverrideSet))
         {
             co_return false;
         }
 
-        String^ staticDataResponse = co_await m_client->GetCurrencyMetadata();
-        String^ allRatiosResponse = co_await m_client->GetCurrencyRatios();
+        String ^ staticDataResponse = co_await m_client->GetCurrencyMetadata();
+        String ^ allRatiosResponse = co_await m_client->GetCurrencyRatios();
         if (staticDataResponse == nullptr || allRatiosResponse == nullptr)
         {
             co_return false;
         }
 
-        vector<UCM::CurrencyStaticData> staticData{};
-        CurrencyRatioMap ratioMap{};
+        vector<UCM::CurrencyStaticData> staticData {};
+        CurrencyRatioMap ratioMap {};
 
-        bool didParse = TryParseWebResponses(
-            staticDataResponse,
-            allRatiosResponse,
-            staticData,
-            ratioMap);
+        bool didParse = TryParseWebResponses(staticDataResponse, allRatiosResponse, staticData, ratioMap);
         if (!didParse)
         {
             co_return false;
@@ -437,19 +409,12 @@ task<bool> CurrencyDataLoader::TryLoadDataFromWebAsync()
 
         try
         {
-            const vector<pair<String^, String^>> cachedFiles = {
-                { StaticDataFilename, staticDataResponse },
-                { AllRatiosDataFilename, allRatiosResponse }
-            };
+            const vector<pair<String ^, String ^>> cachedFiles = {{StaticDataFilename, staticDataResponse}, {AllRatiosDataFilename, allRatiosResponse}};
 
-            StorageFolder^ localCacheFolder = ApplicationData::Current->LocalCacheFolder;
+            StorageFolder ^ localCacheFolder = ApplicationData::Current->LocalCacheFolder;
             for (const auto& fileInfo : cachedFiles)
             {
-                co_await Utils::WriteFileToFolder(
-                    localCacheFolder,
-                    fileInfo.first,
-                    fileInfo.second,
-                    CreationCollisionOption::ReplaceExisting);
+                co_await Utils::WriteFileToFolder(localCacheFolder, fileInfo.first, fileInfo.second, CreationCollisionOption::ReplaceExisting);
             }
 
             SaveLangCodeAndTimestamp();
@@ -464,7 +429,7 @@ task<bool> CurrencyDataLoader::TryLoadDataFromWebAsync()
 
         co_return true;
     }
-    catch (Exception^ ex)
+    catch (Exception ^ ex)
     {
         TraceLogger::GetInstance().LogPlatformException(__FUNCTIONW__, ex);
         co_return false;
@@ -494,91 +459,68 @@ task<bool> CurrencyDataLoader::TryLoadDataFromWebOverrideAsync()
 };
 #pragma optimize("", on)
 
-bool CurrencyDataLoader::TryParseWebResponses(
-    _In_ String^ staticDataJson,
-    _In_ String^ allRatiosJson,
-    _Inout_ vector<UCM::CurrencyStaticData>& staticData,
-    _Inout_ CurrencyRatioMap& allRatiosData)
+bool CurrencyDataLoader::TryParseWebResponses(_In_ String ^ staticDataJson, _In_ String ^ allRatiosJson, _Inout_ vector<UCM::CurrencyStaticData>& staticData,
+                                              _Inout_ CurrencyRatioMap& allRatiosData)
 {
-    return TryParseStaticData(staticDataJson, staticData)
-        && TryParseAllRatiosData(allRatiosJson, allRatiosData);
+    return TryParseStaticData(staticDataJson, staticData) && TryParseAllRatiosData(allRatiosJson, allRatiosData);
 }
 
-bool CurrencyDataLoader::TryParseStaticData(_In_ String^ rawJson, _Inout_ vector<UCM::CurrencyStaticData>& staticData)
+bool CurrencyDataLoader::TryParseStaticData(_In_ String ^ rawJson, _Inout_ vector<UCM::CurrencyStaticData>& staticData)
 {
-    JsonArray^ data = nullptr;
+    JsonArray ^ data = nullptr;
     if (!JsonArray::TryParse(rawJson, &data))
     {
         return false;
     }
 
-    wstring countryCode{ L"" };
-    wstring countryName{ L"" };
-    wstring currencyCode{ L"" };
-    wstring currencyName{ L"" };
-    wstring currencySymbol{ L"" };
+    wstring countryCode {L""};
+    wstring countryName {L""};
+    wstring currencyCode {L""};
+    wstring currencyName {L""};
+    wstring currencySymbol {L""};
 
-    vector<wstring*> values = {
-        &countryCode,
-        &countryName,
-        &currencyCode,
-        &currencyName,
-        &currencySymbol
-    };
+    vector<wstring*> values = {&countryCode, &countryName, &currencyCode, &currencyName, &currencySymbol};
 
     assert(values.size() == STATIC_DATA_PROPERTIES.size());
-    staticData.resize(size_t{ data->Size });
+    staticData.resize(size_t {data->Size});
     for (unsigned int i = 0; i < data->Size; i++)
     {
-        JsonObject^ obj = data->GetAt(i)->GetObject();
+        JsonObject ^ obj = data->GetAt(i)->GetObject();
 
         for (size_t j = 0; j < values.size(); j++)
         {
             (*values[j]) = obj->GetNamedString(StringReference(STATIC_DATA_PROPERTIES[j].data()))->Data();
         }
 
-        staticData[i] = CurrencyStaticData{
-            countryCode,
-            countryName,
-            currencyCode,
-            currencyName,
-            currencySymbol
-        };
+        staticData[i] = CurrencyStaticData {countryCode, countryName, currencyCode, currencyName, currencySymbol};
     }
 
     // TODO - MSFT 8533667: this sort will be replaced by a WinRT call to sort localized strings
-    sort(begin(staticData), end(staticData), [](CurrencyStaticData unit1, CurrencyStaticData unit2)
-    {
-        return unit1.countryName < unit2.countryName;
-    });
+    sort(begin(staticData), end(staticData), [](CurrencyStaticData unit1, CurrencyStaticData unit2) { return unit1.countryName < unit2.countryName; });
 
     return true;
 }
 
-bool CurrencyDataLoader::TryParseAllRatiosData(_In_ String^ rawJson, _Inout_ CurrencyRatioMap& allRatios)
+bool CurrencyDataLoader::TryParseAllRatiosData(_In_ String ^ rawJson, _Inout_ CurrencyRatioMap& allRatios)
 {
-    JsonArray^ data = nullptr;
+    JsonArray ^ data = nullptr;
     if (!JsonArray::TryParse(rawJson, &data))
     {
         return false;
     }
 
-    wstring sourceCurrencyCode{ DefaultCurrencyCode };
+    wstring sourceCurrencyCode {DefaultCurrencyCode};
 
     allRatios.clear();
     for (unsigned int i = 0; i < data->Size; i++)
     {
-        JsonObject^ obj = data->GetAt(i)->GetObject();
+        JsonObject ^ obj = data->GetAt(i)->GetObject();
 
         // Rt is ratio, An is target currency ISO code.
         double relativeRatio = obj->GetNamedNumber(StringReference(RATIO_KEY));
         wstring targetCurrencyCode = obj->GetNamedString(StringReference(CURRENCY_CODE_KEY))->Data();
 
-        allRatios.emplace(targetCurrencyCode, CurrencyRatio{
-            relativeRatio,
-            sourceCurrencyCode,
-            targetCurrencyCode
-        });
+        allRatios.emplace(targetCurrencyCode, CurrencyRatio {relativeRatio, sourceCurrencyCode, targetCurrencyCode});
     }
 
     return true;
@@ -592,7 +534,7 @@ bool CurrencyDataLoader::TryParseAllRatiosData(_In_ String^ rawJson, _Inout_ Cur
 #pragma optimize("", off) // Turn off optimizations to work around DevDiv 393321
 task<void> CurrencyDataLoader::FinalizeUnits(_In_ const vector<UCM::CurrencyStaticData>& staticData, _In_ const CurrencyRatioMap& ratioMap)
 {
-    unordered_map<int, pair<UCM::Unit, double>> idToUnit{};
+    unordered_map<int, pair<UCM::Unit, double>> idToUnit {};
 
     SelectedUnits defaultCurrencies = co_await GetDefaultFromToCurrency();
     wstring fromCurrency = defaultCurrencies.first;
@@ -619,7 +561,7 @@ task<void> CurrencyDataLoader::FinalizeUnits(_In_ const vector<UCM::CurrencyStat
                 bool isConversionTarget = (toCurrency == currencyUnit.currencyCode);
                 isConversionTargetSet = isConversionTargetSet || isConversionTarget;
 
-                UCM::Unit unit = UCM::Unit{
+                UCM::Unit unit = UCM::Unit {
                     id,                        // id
                     currencyUnit.currencyName, // currencyName
                     currencyUnit.countryName,  // countryName
@@ -630,7 +572,7 @@ task<void> CurrencyDataLoader::FinalizeUnits(_In_ const vector<UCM::CurrencyStat
                 };
 
                 m_currencyUnits.push_back(unit);
-                m_currencyMetadata.emplace(unit, CurrencyUnitMetadata{ currencyUnit.currencySymbol });
+                m_currencyMetadata.emplace(unit, CurrencyUnitMetadata {currencyUnit.currencySymbol});
                 idToUnit.insert(pair<int, pair<UCM::Unit, double>>(unit.id, pair<UCM::Unit, double>(unit, (itr->second).ratio)));
                 i++;
             }
@@ -639,7 +581,7 @@ task<void> CurrencyDataLoader::FinalizeUnits(_In_ const vector<UCM::CurrencyStat
         if (!isConversionSourceSet || !isConversionTargetSet)
         {
             GuaranteeSelectedUnits();
-            defaultCurrencies = { DEFAULT_FROM_CURRENCY, DEFAULT_TO_CURRENCY };
+            defaultCurrencies = {DEFAULT_FROM_CURRENCY, DEFAULT_TO_CURRENCY};
         }
 
         m_currencyRatioMap.clear();
@@ -651,7 +593,7 @@ task<void> CurrencyDataLoader::FinalizeUnits(_In_ const vector<UCM::CurrencyStat
             {
                 UCM::Unit targetUnit = (itr->second).first;
                 double conversionRatio = (itr->second).second;
-                UCM::ConversionData parsedData = { 1.0, 0.0, false };
+                UCM::ConversionData parsedData = {1.0, 0.0, false};
                 assert(unitFactor > 0); // divide by zero assert
                 parsedData.ratio = conversionRatio / unitFactor;
                 conversions.insert(make_pair(targetUnit, parsedData));
@@ -702,7 +644,7 @@ void CurrencyDataLoader::NotifyDataLoadFinished(bool didLoad)
 
 void CurrencyDataLoader::SaveLangCodeAndTimestamp()
 {
-    ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
+    ApplicationDataContainer ^ localSettings = ApplicationData::Current->LocalSettings;
     if (localSettings == nullptr)
     {
         return;
@@ -726,20 +668,16 @@ wstring CurrencyDataLoader::GetCurrencyTimestamp()
 {
     wstring timestamp = L"";
 
-    DateTime epoch{};
+    DateTime epoch {};
     if (m_cacheTimestamp.UniversalTime != epoch.UniversalTime)
     {
-        DateTimeFormatter^ dateFormatter = ref new DateTimeFormatter(L"{month.abbreviated} {day.integer}, {year.full}");
+        DateTimeFormatter ^ dateFormatter = ref new DateTimeFormatter(L"{month.abbreviated} {day.integer}, {year.full}");
         wstring date = dateFormatter->Format(m_cacheTimestamp)->Data();
 
-        DateTimeFormatter^ timeFormatter = ref new DateTimeFormatter(L"shorttime");
+        DateTimeFormatter ^ timeFormatter = ref new DateTimeFormatter(L"shorttime");
         wstring time = timeFormatter->Format(m_cacheTimestamp)->Data();
 
-        timestamp = LocalizationStringUtil::GetLocalizedString(
-            m_timestampFormat.c_str(),
-            date.c_str(),
-            time.c_str()
-        );
+        timestamp = LocalizationStringUtil::GetLocalizedString(m_timestampFormat.c_str(), date.c_str(), time.c_str());
     }
 
     return timestamp;
@@ -748,8 +686,8 @@ wstring CurrencyDataLoader::GetCurrencyTimestamp()
 #pragma optimize("", off) // Turn off optimizations to work around DevDiv 393321
 task<SelectedUnits> CurrencyDataLoader::GetDefaultFromToCurrency()
 {
-    wstring fromCurrency{ DEFAULT_FROM_CURRENCY };
-    wstring toCurrency{ DEFAULT_TO_CURRENCY };
+    wstring fromCurrency {DEFAULT_FROM_CURRENCY};
+    wstring toCurrency {DEFAULT_TO_CURRENCY};
 
     // First, check if we previously stored the last used currencies.
     bool foundInLocalSettings = TryGetLastUsedCurrenciesFromLocalSettings(&fromCurrency, &toCurrency);
@@ -758,23 +696,25 @@ task<SelectedUnits> CurrencyDataLoader::GetDefaultFromToCurrency()
         try
         {
             // Second, see if the current locale has preset defaults in DefaultFromToCurrency.json.
-            Uri^ fileUri = ref new Uri(StringReference(DEFAULT_FROM_TO_CURRENCY_FILE_URI));
-            StorageFile^ defaultFromToCurrencyFile = co_await StorageFile::GetFileFromApplicationUriAsync(fileUri);
+            Uri ^ fileUri = ref new Uri(StringReference(DEFAULT_FROM_TO_CURRENCY_FILE_URI));
+            StorageFile ^ defaultFromToCurrencyFile = co_await StorageFile::GetFileFromApplicationUriAsync(fileUri);
             if (defaultFromToCurrencyFile != nullptr)
             {
-                String^ fileContents = co_await FileIO::ReadTextAsync(defaultFromToCurrencyFile);
-                JsonObject^ fromToObject = JsonObject::Parse(fileContents);
-                JsonObject^ regionalDefaults = fromToObject->GetNamedObject(m_responseLanguage);
+                String ^ fileContents = co_await FileIO::ReadTextAsync(defaultFromToCurrencyFile);
+                JsonObject ^ fromToObject = JsonObject::Parse(fileContents);
+                JsonObject ^ regionalDefaults = fromToObject->GetNamedObject(m_responseLanguage);
 
                 // Get both values before assignment in-case either fails.
-                String^ selectedFrom = regionalDefaults->GetNamedString(StringReference(FROM_KEY));
-                String^ selectedTo = regionalDefaults->GetNamedString(StringReference(TO_KEY));
+                String ^ selectedFrom = regionalDefaults->GetNamedString(StringReference(FROM_KEY));
+                String ^ selectedTo = regionalDefaults->GetNamedString(StringReference(TO_KEY));
 
                 fromCurrency = selectedFrom->Data();
                 toCurrency = selectedTo->Data();
             }
         }
-        catch (...) {}
+        catch (...)
+        {
+        }
     }
 
     co_return make_pair(fromCurrency, toCurrency);
@@ -783,16 +723,16 @@ task<SelectedUnits> CurrencyDataLoader::GetDefaultFromToCurrency()
 
 bool CurrencyDataLoader::TryGetLastUsedCurrenciesFromLocalSettings(_Out_ wstring* const fromCurrency, _Out_ wstring* const toCurrency)
 {
-    String^ fromKey = UnitConverterResourceKeys::CurrencyUnitFromKey;
-    String^ toKey = UnitConverterResourceKeys::CurrencyUnitToKey;
-    ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
+    String ^ fromKey = UnitConverterResourceKeys::CurrencyUnitFromKey;
+    String ^ toKey = UnitConverterResourceKeys::CurrencyUnitToKey;
+    ApplicationDataContainer ^ localSettings = ApplicationData::Current->LocalSettings;
     if (localSettings != nullptr && localSettings->Values != nullptr)
     {
-        IPropertySet^ values = localSettings->Values;
+        IPropertySet ^ values = localSettings->Values;
         if (values->HasKey(fromKey) && values->HasKey(toKey))
         {
-            *fromCurrency = static_cast<String^>(values->Lookup(fromKey))->Data();
-            *toCurrency = static_cast<String^>(values->Lookup(toKey))->Data();
+            *fromCurrency = static_cast<String ^>(values->Lookup(fromKey))->Data();
+            *toCurrency = static_cast<String ^>(values->Lookup(toKey))->Data();
 
             return true;
         }
@@ -803,12 +743,12 @@ bool CurrencyDataLoader::TryGetLastUsedCurrenciesFromLocalSettings(_Out_ wstring
 
 void CurrencyDataLoader::SaveSelectedUnitsToLocalSettings(_In_ const SelectedUnits& selectedUnits)
 {
-    String^ fromKey = UnitConverterResourceKeys::CurrencyUnitFromKey;
-    String^ toKey = UnitConverterResourceKeys::CurrencyUnitToKey;
-    ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
+    String ^ fromKey = UnitConverterResourceKeys::CurrencyUnitFromKey;
+    String ^ toKey = UnitConverterResourceKeys::CurrencyUnitToKey;
+    ApplicationDataContainer ^ localSettings = ApplicationData::Current->LocalSettings;
     if (localSettings != nullptr && localSettings->Values != nullptr)
     {
-        IPropertySet^ values = localSettings->Values;
+        IPropertySet ^ values = localSettings->Values;
         values->Insert(fromKey, StringReference(selectedUnits.first.c_str()));
         values->Insert(toKey, StringReference(selectedUnits.second.c_str()));
     }

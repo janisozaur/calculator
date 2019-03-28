@@ -36,7 +36,7 @@ CalculatorProgrammerOperators::CalculatorProgrammerOperators()
     CopyMenuItem->Text = AppResourceProvider::GetInstance().GetResourceString(L"copyMenuItem");
 }
 
-void CalculatorProgrammerOperators::HexButtonChecked(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+void CalculatorProgrammerOperators::HexButtonChecked(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
 {
     TraceLogger::GetInstance().LogRadixButtonUsed(ApplicationView::GetApplicationViewIdForWindow(CoreWindow::GetForCurrentThread()));
     if (Model)
@@ -45,7 +45,7 @@ void CalculatorProgrammerOperators::HexButtonChecked(_In_ Object^ sender, _In_ R
     }
 }
 
-void CalculatorProgrammerOperators::DecButtonChecked(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+void CalculatorProgrammerOperators::DecButtonChecked(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
 {
     TraceLogger::GetInstance().LogRadixButtonUsed(ApplicationView::GetApplicationViewIdForWindow(CoreWindow::GetForCurrentThread()));
     if (Model)
@@ -54,7 +54,7 @@ void CalculatorProgrammerOperators::DecButtonChecked(_In_ Object^ sender, _In_ R
     }
 }
 
-void CalculatorProgrammerOperators::OctButtonChecked(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+void CalculatorProgrammerOperators::OctButtonChecked(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
 {
     TraceLogger::GetInstance().LogRadixButtonUsed(ApplicationView::GetApplicationViewIdForWindow(CoreWindow::GetForCurrentThread()));
     if (Model)
@@ -63,7 +63,7 @@ void CalculatorProgrammerOperators::OctButtonChecked(_In_ Object^ sender, _In_ R
     }
 }
 
-void CalculatorProgrammerOperators::BinButtonChecked(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+void CalculatorProgrammerOperators::BinButtonChecked(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
 {
     TraceLogger::GetInstance().LogRadixButtonUsed(ApplicationView::GetApplicationViewIdForWindow(CoreWindow::GetForCurrentThread()));
     if (Model)
@@ -76,34 +76,34 @@ void CalculatorProgrammerOperators::SetRadixButton(RADIX_TYPE radixType)
 {
     switch (radixType)
     {
-    case RADIX_TYPE::DEC_RADIX:
-    {
-        decimalButton->IsChecked = true;
-        break;
-    }
-    case RADIX_TYPE::HEX_RADIX:
-    {
-        hexButton->IsChecked = true;
-        break;
-    }
-    case RADIX_TYPE::OCT_RADIX:
-    {
-        octButton->IsChecked = true;
-        break;
-    }
-    case RADIX_TYPE::BIN_RADIX:
-    {
-        binaryButton->IsChecked = true;
-        break;
-    }
-    default:
-        assert(false);
+        case RADIX_TYPE::DEC_RADIX:
+        {
+            decimalButton->IsChecked = true;
+            break;
+        }
+        case RADIX_TYPE::HEX_RADIX:
+        {
+            hexButton->IsChecked = true;
+            break;
+        }
+        case RADIX_TYPE::OCT_RADIX:
+        {
+            octButton->IsChecked = true;
+            break;
+        }
+        case RADIX_TYPE::BIN_RADIX:
+        {
+            binaryButton->IsChecked = true;
+            break;
+        }
+        default:
+            assert(false);
     }
 }
 
-void CalculatorProgrammerOperators::OnCopyMenuItemClicked(_In_ Object^ sender, _In_ RoutedEventArgs^ e)
+void CalculatorProgrammerOperators::OnCopyMenuItemClicked(_In_ Object ^ sender, _In_ RoutedEventArgs ^ e)
 {
-    auto source = safe_cast<RadixButton^>(ProgrammerOperatorsContextMenu->Target);
+    auto source = safe_cast<RadixButton ^>(ProgrammerOperatorsContextMenu->Target);
 
     CopyPasteManager::CopyToClipboard(source->GetRawDisplayValue());
 }

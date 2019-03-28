@@ -110,29 +110,29 @@ bool CalcInput::TryAddDigit(unsigned int value, uint32_t radix, bool isIntegerMo
         {
             switch (wordBitWidth % 3)
             {
-            case 1:
-                // in 16 or 64bit word size, if the first digit is a 1 we can enter 6 (16bit) or 22 (64bit) digits
-                allowExtraDigit = (pNumSec->value.front() == L'1');
-                break;
+                case 1:
+                    // in 16 or 64bit word size, if the first digit is a 1 we can enter 6 (16bit) or 22 (64bit) digits
+                    allowExtraDigit = (pNumSec->value.front() == L'1');
+                    break;
 
-            case 2:
-                // in 8 or 32bit word size, if the first digit is a 3 or less we can enter 3 (8bit) or 11 (32bit) digits
-                allowExtraDigit = (pNumSec->value.front() <= L'3');
-                break;
+                case 2:
+                    // in 8 or 32bit word size, if the first digit is a 3 or less we can enter 3 (8bit) or 11 (32bit) digits
+                    allowExtraDigit = (pNumSec->value.front() <= L'3');
+                    break;
             }
         }
         else if (radix == 10)
         {
             // If value length is at least the max, we know we can't add another digit.
-            if(pNumSec->value.size() < maxNumStr.size())
+            if (pNumSec->value.size() < maxNumStr.size())
             {
                 // Compare value to substring of maxNumStr of value.size() length.
                 // If cmpResult > 0:
-                // eg. max is "127", and the current number is "20". first digit itself says we are out. 
+                // eg. max is "127", and the current number is "20". first digit itself says we are out.
                 // Additional digit is not possible
 
                 // If cmpResult < 0:
-                // Success case. eg. max is "127", and current number is say "11". The second digit '1' being < 
+                // Success case. eg. max is "127", and current number is say "11". The second digit '1' being <
                 // corresponding digit '2', means all digits are possible to append, like 119 will still be < 127
 
                 // If cmpResult == 0:
@@ -151,7 +151,7 @@ bool CalcInput::TryAddDigit(unsigned int value, uint32_t radix, bool isIntegerMo
                     }
                     else if (pNumSec->IsNegative() && chDigit <= lastChar + 1)
                     {
-                        // Negative value case, eg. max is "127", and current number is "-12". Then 8 is also valid, as the range 
+                        // Negative value case, eg. max is "127", and current number is "-12". Then 8 is also valid, as the range
                         // is always from -(max+1)...max in signed mode
                         allowExtraDigit = true;
                     }
@@ -310,7 +310,7 @@ Rational CalcInput::ToRational(uint32_t radix, int32_t precision)
         return 0;
     }
 
-    Rational result{ rat };
+    Rational result {rat};
     destroyrat(rat);
 
     return result;

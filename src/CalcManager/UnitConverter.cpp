@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-//using namespace concurrency;
+// using namespace concurrency;
 using namespace std;
 using namespace UnitConversionManager;
 
@@ -30,17 +30,16 @@ static const double MINIMUMDECIMALALLOWED = pow(10, -1 * (MAXIMUMDIGITSALLOWED -
 unordered_map<wchar_t, wstring> quoteConversions;
 unordered_map<wstring, wchar_t> unquoteConversions;
 
-static int _wtoi(const wchar_t *str)
+static int _wtoi(const wchar_t* str)
 {
-  return (int)wcstol(str, 0, 10);
+    return (int)wcstol(str, 0, 10);
 }
 
 /// <summary>
 /// Constructor, sets up all the variables and requires a configLoader
 /// </summary>
 /// <param name="dataLoader">An instance of the IConverterDataLoader interface which we use to read in category/unit names and conversion data</param>
-UnitConverter::UnitConverter(_In_ const shared_ptr<IConverterDataLoader>& dataLoader) :
-    UnitConverter::UnitConverter(dataLoader, nullptr)
+UnitConverter::UnitConverter(_In_ const shared_ptr<IConverterDataLoader>& dataLoader) : UnitConverter::UnitConverter(dataLoader, nullptr)
 {
 }
 
@@ -108,7 +107,7 @@ CategorySelectionInitializer UnitConverter::SetCurrentCategory(const Category& i
         m_currencyDataLoader->LoadData();
     }
 
-    vector<Unit> newUnitList{};
+    vector<Unit> newUnitList {};
     if (CheckLoad())
     {
         if (m_currentCategory.id != input.id)
@@ -197,14 +196,14 @@ void UnitConverter::SwitchActive(const wstring& newValue)
     }
 }
 
-wstring UnitConverter::CategoryToString(const Category& c, const wchar_t * delimiter)
+wstring UnitConverter::CategoryToString(const Category& c, const wchar_t* delimiter)
 {
     wstringstream out(wstringstream::out);
     out << Quote(std::to_wstring(c.id)) << delimiter << Quote(std::to_wstring(c.supportsNegative)) << delimiter << Quote(c.name) << delimiter;
     return out.str();
 }
 
-vector<wstring> UnitConverter::StringToVector(const wstring& w, const wchar_t * delimiter, bool addRemainder)
+vector<wstring> UnitConverter::StringToVector(const wstring& w, const wchar_t* delimiter, bool addRemainder)
 {
     size_t delimiterIndex = w.find(delimiter);
     size_t startIndex = 0;
@@ -234,10 +233,12 @@ Category UnitConverter::StringToCategory(const wstring& w)
     return serializedCategory;
 }
 
-wstring UnitConverter::UnitToString(const Unit& u, const wchar_t * delimiter)
+wstring UnitConverter::UnitToString(const Unit& u, const wchar_t* delimiter)
 {
     wstringstream out(wstringstream::out);
-    out << Quote(std::to_wstring(u.id)) << delimiter << Quote(u.name) << delimiter << Quote(u.abbreviation) << delimiter << std::to_wstring(u.isConversionSource) << delimiter << std::to_wstring(u.isConversionTarget) << delimiter << std::to_wstring(u.isWhimsical) << delimiter;
+    out << Quote(std::to_wstring(u.id)) << delimiter << Quote(u.name) << delimiter << Quote(u.abbreviation) << delimiter
+        << std::to_wstring(u.isConversionSource) << delimiter << std::to_wstring(u.isConversionTarget) << delimiter << std::to_wstring(u.isWhimsical)
+        << delimiter;
     return out.str();
 }
 
@@ -267,7 +268,7 @@ ConversionData UnitConverter::StringToConversionData(const wstring& w)
     return serializedConversionData;
 }
 
-wstring UnitConverter::ConversionDataToString(ConversionData d, const wchar_t * delimiter)
+wstring UnitConverter::ConversionDataToString(ConversionData d, const wchar_t* delimiter)
 {
     wstringstream out(wstringstream::out);
     out.precision(32);
@@ -294,12 +295,13 @@ wstring UnitConverter::Serialize()
     }
 
     wstringstream out(wstringstream::out);
-    const wchar_t * delimiter = L";";
+    const wchar_t* delimiter = L";";
 
     out << UnitToString(m_fromType, delimiter) << "|";
     out << UnitToString(m_toType, delimiter) << "|";
     out << CategoryToString(m_currentCategory, delimiter) << "|";
-    out << std::to_wstring(m_currentHasDecimal) << delimiter << std::to_wstring(m_returnHasDecimal) << delimiter << std::to_wstring(m_switchedActive) << delimiter;
+    out << std::to_wstring(m_currentHasDecimal) << delimiter << std::to_wstring(m_returnHasDecimal) << delimiter << std::to_wstring(m_switchedActive)
+        << delimiter;
     out << m_currentDisplay << delimiter << m_returnDisplay << delimiter << "|";
     wstringstream categoryString(wstringstream::out);
     wstringstream categoryToUnitString(wstringstream::out);
@@ -316,7 +318,8 @@ wstring UnitConverter::Serialize()
         {
             categoryToUnitString << UnitToString(u, delimiter) << ",";
         }
-        categoryToUnitString << "[" << "]";
+        categoryToUnitString << "["
+                             << "]";
     }
 
     for (const auto& cur : m_ratioMap)
@@ -327,7 +330,8 @@ wstring UnitConverter::Serialize()
             unitToUnitToDoubleString << UnitToString(curConversion.first, delimiter) << ":";
             unitToUnitToDoubleString << ConversionDataToString(curConversion.second, delimiter) << ":,";
         }
-        unitToUnitToDoubleString << "[" << "]";
+        unitToUnitToDoubleString << "["
+                                 << "]";
     }
 
     out << categoryString.str() << "|";
@@ -424,7 +428,7 @@ void UnitConverter::RestoreUserPreferences(const wstring& userPreferences)
 wstring UnitConverter::SaveUserPreferences()
 {
     wstringstream out(wstringstream::out);
-    const wchar_t * delimiter = L";";
+    const wchar_t* delimiter = L";";
 
     out << UnitToString(m_fromType, delimiter) << "|";
     out << UnitToString(m_toType, delimiter) << "|";
@@ -443,7 +447,7 @@ wstring UnitConverter::Quote(const wstring& s)
 
     // Iterate over the delimiter characters we need to quote
     wstring::const_iterator cursor = s.begin();
-    while(cursor != s.end())
+    while (cursor != s.end())
     {
         if (quoteConversions.find(*cursor) != quoteConversions.end())
         {
@@ -467,9 +471,9 @@ wstring UnitConverter::Unquote(const wstring& s)
     wstringstream quotedSubString(wstringstream::out);
     wstringstream unquotedString(wstringstream::out);
     wstring::const_iterator cursor = s.begin();
-    while(cursor != s.end())
+    while (cursor != s.end())
     {
-        if(*cursor == LEFTESCAPECHAR)
+        if (*cursor == LEFTESCAPECHAR)
         {
             quotedSubString.str(L"");
             while (cursor != s.end() && *cursor != RIGHTESCAPECHAR)
@@ -515,7 +519,8 @@ void UnitConverter::SendCommand(Command command)
         clearFront = true;
     }
     bool clearBack = false;
-    if ((m_currentHasDecimal && m_currentDisplay.size() - 1 >= MAXIMUMDIGITSALLOWED) || (!m_currentHasDecimal && m_currentDisplay.size() >= MAXIMUMDIGITSALLOWED))
+    if ((m_currentHasDecimal && m_currentDisplay.size() - 1 >= MAXIMUMDIGITSALLOWED)
+        || (!m_currentHasDecimal && m_currentDisplay.size() >= MAXIMUMDIGITSALLOWED))
     {
         clearBack = true;
     }
@@ -528,107 +533,106 @@ void UnitConverter::SendCommand(Command command)
     }
     switch (command)
     {
-    case Command::Zero:
-        m_currentDisplay += L"0";
-        break;
+        case Command::Zero:
+            m_currentDisplay += L"0";
+            break;
 
-    case Command::One:
-        m_currentDisplay += L"1";
-        break;
+        case Command::One:
+            m_currentDisplay += L"1";
+            break;
 
-    case Command::Two:
-        m_currentDisplay += L"2";
-        break;
+        case Command::Two:
+            m_currentDisplay += L"2";
+            break;
 
-    case Command::Three:
-        m_currentDisplay += L"3";
-        break;
+        case Command::Three:
+            m_currentDisplay += L"3";
+            break;
 
-    case Command::Four:
-        m_currentDisplay += L"4";
-        break;
+        case Command::Four:
+            m_currentDisplay += L"4";
+            break;
 
-    case Command::Five:
-        m_currentDisplay += L"5";
-        break;
+        case Command::Five:
+            m_currentDisplay += L"5";
+            break;
 
-    case Command::Six:
-        m_currentDisplay += L"6";
-        break;
+        case Command::Six:
+            m_currentDisplay += L"6";
+            break;
 
-    case Command::Seven:
-        m_currentDisplay += L"7";
-        break;
+        case Command::Seven:
+            m_currentDisplay += L"7";
+            break;
 
-    case Command::Eight:
-        m_currentDisplay += L"8";
-        break;
+        case Command::Eight:
+            m_currentDisplay += L"8";
+            break;
 
-    case Command::Nine:
-        m_currentDisplay += L"9";
-        break;
+        case Command::Nine:
+            m_currentDisplay += L"9";
+            break;
 
-    case Command::Decimal:
-        clearFront = false;
-        clearBack = false;
-        if (!m_currentHasDecimal)
-        {
-            m_currentDisplay += L".";
-            m_currentHasDecimal = true;
-        }
-        break;
-
-    case Command::Backspace:
-        clearFront = false;
-        clearBack = false;
-        if ((m_currentDisplay.front() != '-' && m_currentDisplay.size() > 1) || m_currentDisplay.size() > 2)
-        {
-            if (m_currentDisplay.back() == '.')
+        case Command::Decimal:
+            clearFront = false;
+            clearBack = false;
+            if (!m_currentHasDecimal)
             {
-                m_currentHasDecimal = false;
+                m_currentDisplay += L".";
+                m_currentHasDecimal = true;
             }
-            m_currentDisplay.pop_back();
-        }
-        else
-        {
-            m_currentDisplay = L"0";
-            m_currentHasDecimal = false;
-        }
-        break;
+            break;
 
-    case Command::Negate:
-        clearFront = false;
-        clearBack = false;
-        if (m_currentCategory.supportsNegative)
-        {
-            if (m_currentDisplay.front() == '-')
+        case Command::Backspace:
+            clearFront = false;
+            clearBack = false;
+            if ((m_currentDisplay.front() != '-' && m_currentDisplay.size() > 1) || m_currentDisplay.size() > 2)
             {
-                m_currentDisplay.erase(0, 1);
+                if (m_currentDisplay.back() == '.')
+                {
+                    m_currentHasDecimal = false;
+                }
+                m_currentDisplay.pop_back();
             }
             else
             {
-                m_currentDisplay.insert(0, 1, '-');
+                m_currentDisplay = L"0";
+                m_currentHasDecimal = false;
             }
-        }
-        break;
+            break;
 
-    case Command::Clear:
-        clearFront = false;
-        clearBack = false;
-        ClearValues();
-        break;
+        case Command::Negate:
+            clearFront = false;
+            clearBack = false;
+            if (m_currentCategory.supportsNegative)
+            {
+                if (m_currentDisplay.front() == '-')
+                {
+                    m_currentDisplay.erase(0, 1);
+                }
+                else
+                {
+                    m_currentDisplay.insert(0, 1, '-');
+                }
+            }
+            break;
 
-    case Command::Reset:
-        clearFront = false;
-        clearBack = false;
-        ClearValues();
-        Reset();
-        break;
+        case Command::Clear:
+            clearFront = false;
+            clearBack = false;
+            ClearValues();
+            break;
 
-    default:
-        break;
+        case Command::Reset:
+            clearFront = false;
+            clearBack = false;
+            ClearValues();
+            Reset();
+            break;
+
+        default:
+            break;
     }
-
 
     if (clearFront)
     {
@@ -742,7 +746,7 @@ vector<tuple<wstring, Unit>> UnitConverter::CalculateSuggested()
             newEntry.magnitude = log10(convertedValue);
             newEntry.value = convertedValue;
             newEntry.type = cur.first;
-            if(newEntry.type.isWhimsical == false)
+            if (newEntry.type.isWhimsical == false)
                 intermediateVector.push_back(newEntry);
             else
                 intermediateWhimsicalVector.push_back(newEntry);
@@ -750,9 +754,7 @@ vector<tuple<wstring, Unit>> UnitConverter::CalculateSuggested()
     }
 
     // Sort the resulting list by absolute magnitude, breaking ties by choosing the positive value
-    sort(intermediateVector.begin(), intermediateVector.end(), []
-    (SuggestedValueIntermediate first, SuggestedValueIntermediate second)
-    {
+    sort(intermediateVector.begin(), intermediateVector.end(), [](SuggestedValueIntermediate first, SuggestedValueIntermediate second) {
         if (abs(first.magnitude) == abs(second.magnitude))
         {
             return first.magnitude > second.magnitude;
@@ -773,7 +775,7 @@ vector<tuple<wstring, Unit>> UnitConverter::CalculateSuggested()
         }
         else if (abs(entry.value) < 1000)
         {
-        roundedString = RoundSignificant(entry.value, 1);
+            roundedString = RoundSignificant(entry.value, 1);
         }
         else
         {
@@ -788,9 +790,7 @@ vector<tuple<wstring, Unit>> UnitConverter::CalculateSuggested()
 
     // The Whimsicals are determined differently
     // Sort the resulting list by absolute magnitude, breaking ties by choosing the positive value
-    sort(intermediateWhimsicalVector.begin(), intermediateWhimsicalVector.end(), []
-    (SuggestedValueIntermediate first, SuggestedValueIntermediate second)
-    {
+    sort(intermediateWhimsicalVector.begin(), intermediateWhimsicalVector.end(), [](SuggestedValueIntermediate first, SuggestedValueIntermediate second) {
         if (abs(first.magnitude) == abs(second.magnitude))
         {
             return first.magnitude > second.magnitude;
@@ -916,7 +916,6 @@ shared_ptr<IConverterDataLoader> UnitConverter::GetDataLoaderForCategory(const C
 /// </summary>
 void UnitConverter::InitializeSelectedUnits()
 {
-
     if (m_categoryToUnits.empty())
     {
         return;
@@ -1041,7 +1040,7 @@ void UnitConverter::TrimString(wstring& returnString)
     }
 
     wstring::iterator iter;
-    for (iter = returnString.end() - 1; ;iter--)
+    for (iter = returnString.end() - 1;; iter--)
     {
         if (*iter != L'0')
         {
@@ -1049,9 +1048,9 @@ void UnitConverter::TrimString(wstring& returnString)
             break;
         }
     }
-    if (*(returnString.end()-1) == L'.')
+    if (*(returnString.end() - 1) == L'.')
     {
-        returnString.erase(returnString.end()-1, returnString.end());
+        returnString.erase(returnString.end() - 1, returnString.end());
     }
 }
 
