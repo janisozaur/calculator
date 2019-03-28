@@ -14,8 +14,10 @@ steps:
     wget https://github.com/angular/clang-format/raw/master/bin/linux_x64/clang-format
     chmod a+x clang-format
     ./clang-format --version
-    for file in $(git ls-files -z | grep -z \\.cpp$); do
+    export IFS=$'\n'
+    for file in $(git ls-files | grep \\.cpp$); do
         echo Formatting "$file"
         ./clang-format -style=file -i "$file"
     done
+    git diff
   displayName: 'make'
