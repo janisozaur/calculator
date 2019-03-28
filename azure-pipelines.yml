@@ -11,7 +11,7 @@ pool:
 
 steps:
 - script: |
-    wget https://github.com/angular/clang-format/raw/master/bin/linux_x64/clang-format
+    wget --no-verbose https://github.com/angular/clang-format/raw/master/bin/linux_x64/clang-format
     chmod a+x clang-format
     ./clang-format --version
     export IFS=$'\n'
@@ -19,8 +19,8 @@ steps:
         echo Formatting "$file"
         ./clang-format -style=file -i "$file"
     done
-    echo "\\n\\n\\n\\tChecking diff...\\n\\n\\n"
+    echo -e "\\n\\n\\n\\tChecking diff...\\n\\n\\n"
     set -e
     git diff --exit-code
-    echo "\\tStyle is fine"
+    echo -e "\\tStyle is fine"
   displayName: 'make'
