@@ -19,5 +19,8 @@ steps:
         echo Formatting "$file"
         ./clang-format -style=file -i "$file"
     done
+    echo "\\n\\n\\n\\tChecking diff...\\n\\n\\n"
+    set -e
     git diff --exit-code
+    echo "\\tStyle is fine"
   displayName: 'make'
