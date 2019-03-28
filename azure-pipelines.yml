@@ -20,4 +20,5 @@ steps:
         ./clang-format -style=file -i "$file"
     done
     git diff
+    false
   displayName: 'make'
