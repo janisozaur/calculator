@@ -2,6 +2,7 @@ add_library(CalcManager
 	CalculatorHistory.cpp
 	CalculatorManager.cpp
 	ExpressionCommand.cpp
+	NumberFormattingUtils.cpp
 	pch.cpp
 	UnitConverter.cpp
 )

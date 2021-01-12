@@ -5,14 +5,20 @@
 
 #include <CppUnitTest.h>
 
-#include "CalcManager/CalculatorHistory.h"
+#if defined(_WIN32) && defined(_MSC_VER)
 #include "CalcViewModel/Common/EngineResourceProvider.h"
+#else
+#include "Mocks/MockResourceProvider.h"
+#endif
+#include "CalcManager/CalculatorHistory.h"
 #include "CalcManager/NumberFormattingUtils.h"
 
+#if defined(_WIN32) && defined(_MSC_VER)
+using namespace Platform;
+#endif
 using namespace CalculatorApp;
 using namespace CalculationManager;
 using namespace CalcManager::NumberFormattingUtils;
-using namespace Platform;
 using namespace std;
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -279,7 +285,11 @@ namespace CalculatorManagerTest
     void CalculatorManagerTest::CommonSetup()
     {
         m_calculatorDisplayTester = std::make_shared<CalculatorManagerDisplayTester>();
+        #if defined(_WIN32) && defined(_MSC_VER)
         m_resourceProvider = std::make_shared<EngineResourceProvider>();
+        #else
+        m_resourceProvider = std::make_shared<MockResourceProvider>();
+        #endif
         m_calculatorManager = std::make_shared<CalculatorManager>(m_calculatorDisplayTester.get(), m_resourceProvider.get());
         TestDriver::Initialize(m_calculatorDisplayTester, m_calculatorManager);
     }
@@ -703,15 +713,19 @@ namespace CalculatorManagerTest
 
         Command commands5[] = { Command::Command1, Command::Command2, Command::Command3, Command::CommandNULL };
         TestDriver::Test(L"123", L"", commands5, true, false);
+        printf("%d\n", __LINE__);
 
         Command commands6[] = { Command::ModeScientific, Command::CommandNULL };
         TestDriver::Test(L"0", L"", commands6, true, false);
+        printf("%d\n", __LINE__);
 
         Command commands7[] = { Command::Command6, Command::Command7, Command::CommandADD, Command::CommandNULL };
         TestDriver::Test(L"67", L"67 + ", commands7, true, false);
+        printf("%d\n", __LINE__);
 
         Command commands8[] = { Command::ModeBasic, Command::CommandNULL };
         TestDriver::Test(L"0", L"", commands8, true, false);
+        printf("%d\n", __LINE__);
     }
 
     void CalculatorManagerTest::CalculatorManagerTestProgrammer()

@@ -9,3 +9,4 @@ if(CMAKE_CXX_COMPILER MATCHES ".*clang")
 endif()
 
 add_subdirectory(CalcManager)
+add_subdirectory(CalculatorUnitTests)

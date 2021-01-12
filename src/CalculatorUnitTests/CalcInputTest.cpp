@@ -257,10 +257,10 @@ namespace CalculatorEngineTests
         {
             m_calcInput.TryAddDigit(0, 10, false, L"999", 64, 32);
             m_calcInput.TryAddDecimalPt();
-            VERIFY_ARE_EQUAL(L"0.", m_calcInput.ToString(10), L"Verify input before backspace.")
+            VERIFY_ARE_EQUAL(L"0.", m_calcInput.ToString(10), L"Verify input before backspace.");
             m_calcInput.Backspace();
             m_calcInput.TryAddDigit(0, 10, false, L"999", 64, 32);
-            VERIFY_ARE_EQUAL(L"0", m_calcInput.ToString(10), L"Verify input after backspace.")
+            VERIFY_ARE_EQUAL(L"0", m_calcInput.ToString(10), L"Verify input after backspace.");
         }
 
         TEST_METHOD(SetDecimalSymbol)

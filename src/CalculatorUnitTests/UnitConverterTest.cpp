@@ -119,7 +119,7 @@ namespace UnitConverterUnitTests
             return true;
         }
 
-        UINT m_loadDataCallCount;
+        unsigned int m_loadDataCallCount;
 
     private:
         vector<Category> m_categories;
@@ -268,9 +268,9 @@ namespace UnitConverterUnitTests
     // Test ctor/initialization states
     void UnitConverterTest::UnitConverterTestInit()
     {
-        VERIFY_ARE_EQUAL((UINT)0, s_xmlLoader->m_loadDataCallCount); // shouldn't have initialized the loader yet
+        VERIFY_ARE_EQUAL((unsigned int)0, s_xmlLoader->m_loadDataCallCount); // shouldn't have initialized the loader yet
         s_unitConverter->Initialize();
-        VERIFY_ARE_EQUAL((UINT)1, s_xmlLoader->m_loadDataCallCount); // now we should have loaded
+        VERIFY_ARE_EQUAL((unsigned int)1, s_xmlLoader->m_loadDataCallCount); // now we should have loaded
     }
 
     // Verify a basic input command stream.'3', '2', '.', '0'

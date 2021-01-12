@@ -4,7 +4,11 @@
 #include "pch.h"
 #include <CppUnitTest.h>
 
+#if defined(_WIN32) && defined(_MSC_VER)
 #include "CalcViewModel/Common/EngineResourceProvider.h"
+#else
+#include "Mocks/MockResourceProvider.h"
+#endif
 
 using namespace std;
 using namespace CalculatorApp;
@@ -19,7 +23,11 @@ namespace CalculatorEngineTests
     {
         TEST_METHOD_INITIALIZE(CommonSetup)
         {
+#if defined(_WIN32) && defined(_MSC_VER)
             m_resourceProvider = make_shared<EngineResourceProvider>();
+#else
+            m_resourceProvider = make_shared<MockResourceProvider>();
+#endif
             m_history = make_shared<CalculatorHistory>(MAX_HISTORY_SIZE);
             CCalcEngine::InitialOneTimeOnlySetup(*(m_resourceProvider.get()));
             m_calcEngine = make_unique<CCalcEngine>(
@@ -181,7 +189,8 @@ namespace CalculatorEngineTests
             groupingVector = { 3, 0 };
             constexpr wstring_view nonRepeatingGrouping = L"3;0;0";
             constexpr wstring_view repeatingGrouping = nonRepeatingGrouping.substr(0, 3);
-            VERIFY_ARE_EQUAL(groupingVector, CCalcEngine::DigitGroupingStringToGroupingVector(repeatingGrouping), L"Verify we don't go past the end of wstring_view range");
+            VERIFY_ARE_EQUAL(
+                groupingVector, CCalcEngine::DigitGroupingStringToGroupingVector(repeatingGrouping), L"Verify we don't go past the end of wstring_view range");
         }
 
         TEST_METHOD(TestGroupDigits)
